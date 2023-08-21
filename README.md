@@ -1,26 +1,61 @@
-# React + TypeScript + Vite
+# FairSpace App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FairSpace is an empowering app designed to promote workplace equity, inclusivity, and respect. It provides a platform for anonymous incident reporting and offers educational resources to foster positive change in workplaces.
 
-Currently, two official plugins are available:
+![FairSpace App Screenshot](app-screenshot.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Anonymous incident reporting
+- Resource library for workplace equity education
+- Interactive modules on inclusivity and respectful behavior
+- Real-time notifications for reported incidents
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Technologies Used
 
-- Configure the top-level `parserOptions` property like this:
+- React.js
+- Vite
+- TypeScript
+- CSS (or CSS-in-JS library of your choice)
+- [Other technologies you're using]
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- [Install Node.js](https://nodejs.org/)
+
+### Installation
+
+1. Clone this repository:
+
+   ```sh
+   git clone https://github.com/your-username/fairspace.git
+
+2. Navigate to the project directory:
+
+    ```sh
+    cd fairspace
+    ```
+3. Install dependencies:
+
+    ```npm install```
+4. Start the development server:
+    ```
+    vite dev
+    ```
+5. Open your browser and go to http://localhost:5173 to see the app in action.
+
+### Contributing
+We welcome contributions from the community! If you'd like to contribute to FairSpace, please follow our contribution guidelines.
+
+### License
+This project is licensed under the MIT License.
+
+Acknowledgements
+Me, myself and I
+
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
