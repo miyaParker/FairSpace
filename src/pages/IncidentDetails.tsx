@@ -5,7 +5,9 @@ import NavBar from '../components/NavBar';
 import AuthContext from '../contexts/rename/AuthContext';
 import {useParams} from 'react-router-dom';
 import {AnimatePresence, motion} from 'framer-motion';
-
+import {Incident} from '../components/IncidentReportForm';
+import firebase from 'firebase/compat/app';
+import DataSnapshot = firebase.database.DataSnapshot;
 const Incidents = () => {
 	const {incidentId} = useParams();
 	const {user} = useContext(AuthContext);
@@ -25,13 +27,15 @@ const Incidents = () => {
 	];
 	const [rating, setRating] = useState(0);
 	const [showDropdown, setShowDropdown] = useState(false);
-	const [incident, setIncident] = useState(null);
+	const [incident, setIncident] = useState({} as Incident);
 	const [response, setResponse] = useState('');
 	const [error, setError] = useState('');
 	const [formError, setFormError] = useState('');
 	const assignCase = (body) => {
 		if (body.investigator === 'Assign to Me') body['investigator'] = user.email;
-		updateIncident(incident.id, body);
+		updateIncident(incident.id, body, (snapshot: DataSnapshot) => {
+			console.log(snapshot.val());
+		});
 	};
 	const resolveCase = (body) => {
 		if (incident?.feedback && incident.feedback.length) {
@@ -63,7 +67,7 @@ const Incidents = () => {
 			getIncidentById(incidentId, fetchCallback);
 		});
 	};
-	const fetchCallback = (snapshot) => {
+	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
 		setIncident(data);
 	};
@@ -224,7 +228,6 @@ const Incidents = () => {
 																	onChange={(e) => setResponse(e.target.value)}
 																	rows={3}
 																	className='w-full rounded-[10px] p-2 bg-white text-[18px] text-black block border border-black'
-																	type='text'
 																/>
 																<p className='text-red-500 py-[10px]'>
 																	{formError}
@@ -345,7 +348,7 @@ const Incidents = () => {
 										</p>
 										<div className='mb-[20px] border-l border-l-4 px-8'>
 											{incident.feedback
-												.sort((a, b) => a.date - b.date)
+												.sort((a, b) => parseInt(a.date) - parseInt(b.date))
 												.map((feedbackItem, index) => {
 													const dateArr = new Date(feedbackItem.date)
 														.toDateString()
@@ -370,9 +373,10 @@ const Incidents = () => {
 																	{`${dateArr[1]} ${dateArr[2]}, ${dateArr[3]}`}
 																</p>
 															</div>
-															{index < incident.feedback.length - 1 && (
-																<div className='w-full h-[1px] bg-gray/20 my-[20px]'></div>
-															)}
+															{incident?.feedback &&
+																index < incident?.feedback.length - 1 && (
+																	<div className='w-full h-[1px] bg-gray/20 my-[20px]'></div>
+																)}
 														</>
 													);
 												})}
@@ -381,7 +385,7 @@ const Incidents = () => {
 								)}
 							{incident.status !== 'Resolved' &&
 								(((user?.isAdmin || user?.isSuperAdmin) &&
-									incident.investigator === user.email) ||
+									incident?.investigator === user.email) ||
 									(incident?.feedback && incident?.feedback?.length)) && (
 									<div className='relative max-w-[800px]'>
 										<label className='text-[24px] font-semibold mb-[10px]'>
@@ -395,7 +399,6 @@ const Incidents = () => {
 											onChange={(e) => setResponse(e.target.value)}
 											rows={5}
 											className='mb-[20px] w-full rounded-[28px] p-8 bg-white text-[22px] mt-4 text-black block border border-black'
-											type='text'
 										/>
 										<div className='absolute right-0 w-max cursor-pointer gap-[10px] rounded-[40px] bg-black flex justify-center px-[20px] py-[15px]'>
 											<button

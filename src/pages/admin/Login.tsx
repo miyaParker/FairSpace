@@ -21,11 +21,11 @@ const AdminLogin = () => {
 		e.preventDefault();
 		if (user.email && user.password) {
 			signInAdmin(user).then((res) => {
-				if (res.user) {
+				if (res && res?.user) {
 					login();
 					navigate('/admin/dashboard');
 				} else {
-					setError(res.error);
+					if (res && res?.error) setError(res.error);
 				}
 			});
 		}

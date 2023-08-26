@@ -1,21 +1,24 @@
 import UserContext from './AuthContext';
-import {useState} from 'react';
+import {ReactNode, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import firebase from 'firebase/compat/app';
+import User = firebase.User;
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({children}: {children: ReactNode}) => {
 	const navigate = useNavigate();
-	const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+	const [user, setUser] = useState(
+		{} as User & {isAdmin: boolean; isSuperAdmin: boolean; role: string}
+	);
 
 	const login = () => {
-		const userObject = JSON.parse(localStorage.getItem('user'));
-		setUser(userObject);
+		const userObject = localStorage.getItem('user');
+		if (userObject) setUser(JSON.parse(userObject));
 	};
 
 	const logout = () => {
 		const isAdmin = user?.isAdmin || user?.isSuperAdmin;
 		localStorage.removeItem('user');
 		if (isAdmin) {
-			setUser(null);
 			navigate('/auth/admin/login');
 			return;
 		}

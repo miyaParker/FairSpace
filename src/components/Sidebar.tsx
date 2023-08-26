@@ -82,8 +82,17 @@ const Sidebar = () => {
 				</div>
 			</a>
 
-			{user?.isAdmin || user?.isSuperAdmin
+			{user?.isAdmin
 				? adminLinks.map((link, index) => (
+						<a key={index} href={link.href}>
+							<div className='flex gap-x-[16px]'>
+								<img src={link.icon} width={24} height={24} />
+								<p className='text-[22px]'>{link.name}</p>
+							</div>
+						</a>
+				  ))
+				: user?.isSuperAdmin
+				? superAdminLinks.map((link, index) => (
 						<a key={index} href={link.href}>
 							<div className='flex gap-x-[16px]'>
 								<img src={link.icon} width={24} height={24} />

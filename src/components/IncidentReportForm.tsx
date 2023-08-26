@@ -1,28 +1,44 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {motion} from 'framer-motion';
 import {createIncident} from '../services/dashboard';
 import Loader from './Loader';
+import firebase from 'firebase/compat/app';
+import User = firebase.User;
 
-const IncidentReportForm = ({show, setShow}) => {
-	interface userData {
-		date: string;
-		time: string;
-		location: string;
-		incidentType: 'Discrimination' | 'Harassment' | 'Bias' | string;
-		status: 'Pending' | 'Under Review' | 'Resolved' | string;
-		severity: string;
-		description: string;
-		partiesInvolved: string;
-		witnesses: string;
-		evidence: string;
-		emotionalImpact?: string;
-		desiredOutcome?: string;
-		confidentiality: string;
-		contactInformation?: string;
-		comments?: string;
-	}
+export interface Feedback {
+	date: string;
+	response: string;
+	from: string;
+}
 
-	const user = JSON.parse(localStorage.getItem('user'));
+export interface Incident {
+	date: string;
+	time: string;
+	location: string;
+	incidentType: 'Discrimination' | 'Harassment' | 'Bias' | string;
+	status: 'Pending' | 'Under Review' | 'Resolved' | string;
+	severity: string;
+	description: string;
+	partiesInvolved: string;
+	witnesses: string;
+	evidence: string;
+	id?: string;
+	investigator?: string;
+	feedback?: Feedback[];
+	emotionalImpact?: string;
+	rating?: number;
+	desiredOutcome?: string;
+	confidentiality: string;
+	contactInformation?: string;
+	comments?: string;
+}
+
+const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
+	const [user, setUser] = useState({} as User);
+	useEffect(() => {
+		const userObject = localStorage.getItem('user');
+		if (userObject) setUser(JSON.parse(userObject));
+	}, []);
 	const requiredFields = {
 		1: 'date',
 		3: 'location',
@@ -37,7 +53,7 @@ const IncidentReportForm = ({show, setShow}) => {
 	const [loading, setLoading] = useState(false);
 	const [index, setIndex] = useState(1);
 	const [prevIndex, setPrevIndex] = useState(1);
-	const [formData, setFormData] = useState<userData>({
+	const [formData, setFormData] = useState<Incident>({
 		date: '',
 		time: '',
 		location: '',
@@ -67,7 +83,7 @@ const IncidentReportForm = ({show, setShow}) => {
 	};
 	const handleSubmit = () => {
 		const data = {
-			uid: user.uid,
+			uid: user?.uid,
 			...formData,
 		};
 		setLoading(true);
@@ -113,7 +129,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										placeholder='mm/dd/yyyy'
 										required={true}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 									{error.key == 1 ? (
 										<p className='py-[20px] text-red-500'>{error.value}</p>
@@ -147,7 +162,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										placeholder='hh:mm'
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 								</motion.div>
 							) : null}
@@ -176,7 +190,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 									{error.key == 3 ? (
 										<p className='py-[20px] text-red-500'>{error.value}</p>
@@ -208,7 +221,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 									{error.key == 4 ? (
 										<p className='py-[20px] text-red-500'>{error.value}</p>
@@ -240,7 +252,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 									{error.key == 5 ? (
 										<p className='py-[20px] text-red-500'>{error.value}</p>
@@ -306,7 +317,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 									{error.key == 7 ? (
 										<p className='py-[20px] text-red-500'>{error.value}</p>
@@ -372,7 +382,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 								</motion.div>
 							) : null}
@@ -398,7 +407,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 								</motion.div>
 							) : null}
@@ -501,7 +509,6 @@ const IncidentReportForm = ({show, setShow}) => {
 										}
 										cols={100}
 										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
-										type='text'
 									/>
 								</motion.div>
 							) : null}
@@ -522,7 +529,9 @@ const IncidentReportForm = ({show, setShow}) => {
 									onClick={() => {
 										const required = Object.keys(requiredFields);
 										if (required.includes(index.toString())) {
-											if (formData[requiredFields[index]]) {
+											if (
+												formData[requiredFields[index] as keyof typeof formData]
+											) {
 												goNext();
 											} else
 												setError({

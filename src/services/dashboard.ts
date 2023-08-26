@@ -10,8 +10,9 @@ import {
 	orderByChild,
 	equalTo,
 } from 'firebase/database';
+import {Incident} from '../components/IncidentReportForm';
 
-export const createIncident = (data) => {
+export const createIncident = (data: Incident) => {
 	const db = initDB();
 
 	const reportId = push(child(ref(db), 'incidents')).key;
@@ -22,12 +23,15 @@ export const createIncident = (data) => {
 		.catch((err) => console.error(err));
 };
 
-export const fetchIncidents = (onSuccess) => {
+export const fetchIncidents = (onSuccess: (snapshot: any) => unknown) => {
 	const db = initDB();
 	const incidentsRef = ref(db, 'incidents/');
 	onValue(incidentsRef, onSuccess);
 };
-export const fetchAssignedCases = (email, onSuccess) => {
+export const fetchAssignedCases = (
+	email: string,
+	onSuccess: (snapshot: any) => unknown
+) => {
 	const db = initDB();
 	const incidentsRef = query(
 		ref(db, 'incidents/'),
@@ -37,13 +41,17 @@ export const fetchAssignedCases = (email, onSuccess) => {
 	onValue(incidentsRef, onSuccess);
 };
 
-export const getIncidentById = (id, onSuccess) => {
+export const getIncidentById = (id, onSuccess: (snapshot: any) => unknown) => {
 	const db = initDB();
 	const incidentsRef = ref(db, 'incidents/' + id);
 	onValue(incidentsRef, onSuccess);
 };
 
-export const updateIncident = (id, body, onSuccess = null) => {
+export const updateIncident = (
+	id,
+	body,
+	onSuccess: (snapshot: any) => unknown
+) => {
 	const db = initDB();
 
 	const incidentsRef = ref(db, 'incidents/' + id);
@@ -56,7 +64,11 @@ export const updateIncident = (id, body, onSuccess = null) => {
 		const updates = {};
 		updates['/incidents/' + id] = postData;
 		update(ref(db), updates)
-			.then(() => typeof onSuccess === 'function' && onSuccess())
+			.then(
+				() =>
+					typeof onSuccess === 'function' &&
+					typeof onSuccess(snapshot) === 'function'
+			)
 			.catch((err) => console.error(err));
 	});
 };

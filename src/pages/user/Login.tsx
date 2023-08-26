@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import UserContext from '../../contexts/rename/AuthContext';
 
 const Login = () => {
-	const {authUser, login} = useContext(UserContext);
+	const {user: authUser, login} = useContext(UserContext);
 	const [error, setError] = useState('');
 	const [user, setUser] = useState({
 		email: '',
@@ -19,16 +19,13 @@ const Login = () => {
 		e.preventDefault();
 		if (user.email && user.password) {
 			signIn(user).then((res) => {
-				console.log(res);
-				if (res.user) {
-					console.log('we have a user');
+				if (res && res?.user) {
 					login();
-					console.log(localStorage.getItem('user'));
 					setTimeout(() => {
 						navigate('/app/incidents');
 					}, 3000);
 				} else {
-					setError(res.error);
+					if (res && res?.error) setError(res.error);
 				}
 			});
 		}

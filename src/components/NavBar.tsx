@@ -2,7 +2,7 @@ import {useContext, useState} from 'react';
 import UserContext from '../contexts/rename/AuthContext';
 import {motion, AnimatePresence} from 'framer-motion';
 
-const NavBar = ({title}) => {
+const NavBar = ({title}: {title: string}) => {
 	const {user, logout} = useContext(UserContext);
 	const [showDropdown, setShowDropdown] = useState(false);
 

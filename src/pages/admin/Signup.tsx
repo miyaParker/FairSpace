@@ -20,13 +20,13 @@ const AdminSignup = () => {
 		e.preventDefault();
 		if (user.email && user.password) {
 			createAdmin(user).then((res) => {
-				if (res.user) {
+				if (res && res?.user) {
 					login();
 					setTimeout(() => {
 						navigate('/admin/dashboard');
 					}, 3000);
 				} else {
-					setError(res.error);
+					if (res && res?.error) setError(res.error);
 				}
 			});
 		}

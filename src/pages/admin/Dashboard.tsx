@@ -2,6 +2,8 @@ import DashboardLayout from '../../layouts/DashboardLayout';
 import {useContext, useEffect, useState} from 'react';
 import IncidentReportForm from '../../components/IncidentReportForm';
 import NavBar from '../../components/NavBar';
+import firebase from 'firebase/compat/app';
+import {Incident} from '../../components/IncidentReportForm';
 import {
 	LineChart,
 	Line,
@@ -12,6 +14,7 @@ import {
 } from 'recharts';
 import {fetchIncidents, fetchAssignedCases} from '../../services/dashboard';
 import UserContext from '../../contexts/rename/AuthContext';
+import DataSnapshot = firebase.database.DataSnapshot;
 
 const Incidents = () => {
 	const {user} = useContext(UserContext);
@@ -29,15 +32,19 @@ const Incidents = () => {
 		'Nov',
 		'Dec',
 	];
-	const [incidents, setIncidents] = useState([]);
-	const [pendingIncidents, setPendingIncidents] = useState([]);
-	const [resolvedIncidents, setResolvedIncidents] = useState([]);
+	const [incidents, setIncidents] = useState<Incident[]>([] as Incident[]);
+	const [pendingIncidents, setPendingIncidents] = useState<Incident[]>(
+		[] as Incident[]
+	);
+	const [resolvedIncidents, setResolvedIncidents] = useState<Incident[]>(
+		[] as Incident[]
+	);
 	const [rating, setRating] = useState(0);
-	const fetchCallback = (snapshot) => {
+	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
 		console.log(data);
 		if (data) {
-			const incidentsArr = Object.values(data);
+			const incidentsArr = Object.values(data) as Incident[];
 			setIncidents(incidentsArr);
 			const pending = incidentsArr.filter(
 				(incident) => incident.status === 'Pending'
@@ -46,16 +53,11 @@ const Incidents = () => {
 				(incident) => incident.status === 'Resolved'
 			);
 			const ratedIncidents = incidentsArr.filter(
-				(incident) => incident.rating > 0
+				(incident) => incident?.rating && incident?.rating > 0
 			);
-			console.log(ratedIncidents);
-			console.log(pending);
-			console.log(resolved);
 			const ratings = ratedIncidents.reduce((a, b) => {
-				console.log(a, b);
-				return a + b.rating;
+				return a + b.rating!;
 			}, 0);
-			console.log(ratings);
 			setPendingIncidents(pending);
 			setResolvedIncidents(resolved);
 			setRating(ratings / ratedIncidents.length);

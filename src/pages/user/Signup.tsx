@@ -20,12 +20,10 @@ const Signup = () => {
 		e.preventDefault();
 		if (user.email && user.password) {
 			createUser(user).then((res) => {
-				if (res.user) {
-					console.log('we got a user', res.user);
+				if (res && res?.user) {
 					navigate('/app/incidents');
 				} else {
-					console.log('buggy stuff', res.error);
-					setError(res.error);
+					if (res && res?.error) setError(res.error);
 				}
 			});
 		}

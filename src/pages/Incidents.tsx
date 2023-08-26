@@ -4,7 +4,9 @@ import IncidentReportForm from '../components/IncidentReportForm';
 import {fetchIncidents} from '../services/dashboard';
 import NavBar from '../components/NavBar';
 import AuthContext from '../contexts/rename/AuthContext';
-
+import {Incident} from '../components/IncidentReportForm';
+import firebase from 'firebase/compat/app';
+import DataSnapshot = firebase.database.DataSnapshot;
 const Incidents = () => {
 	const {user} = useContext(AuthContext);
 	const monthArray = [
@@ -23,13 +25,13 @@ const Incidents = () => {
 	];
 
 	const [showForm, setShowForm] = useState(false);
-	const [incidents, setIncidents] = useState([]);
+	const [incidents, setIncidents] = useState<Incident[]>([] as Incident[]);
 	const handleClick = () => {
 		setShowForm(true);
 	};
-	const fetchCallback = (snapshot) => {
+	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
-		const incidentsArr = Object.values(data);
+		const incidentsArr = Object.values(data) as Incident[];
 		setIncidents(incidentsArr);
 	};
 	const createDateString = (date) => {
@@ -68,9 +70,9 @@ const Incidents = () => {
 							<p className='w-1/5 text-gray'>Severity</p>
 							<p className='w-1/5 text-gray'>Status</p>
 						</div>
-						{incidents.map((incident) => (
+						{incidents.map((incident: Incident) => (
 							<a
-								key={incident.id}
+								key={incident?.id}
 								href={
 									user?.isAdmin || user?.isSuperAdmin
 										? `/admin/incidents/${incident.id}`
@@ -79,15 +81,15 @@ const Incidents = () => {
 								<div>
 									<div className='w-full flex my-[20px]'>
 										<p className='w-1/5  text-black'>
-											#{incident.id.substring(3, 10).toUpperCase()}
+											#{incident?.id?.substring(3, 10).toUpperCase()}
 										</p>
 										<p className='w-1/5  text-black'>
-											{createDateString(incident.date)}
+											{createDateString(incident?.date)}
 										</p>
 										<p className='w-1/5 text-black'>{incident.incidentType}</p>
 										<p className='w-1/5 text-black'>{incident.severity}</p>
 										<p className='w-1/5 text-black flex gap-x-[10px] items-center'>
-											{incident.status === 'Pending' && (
+											{incident?.status === 'Pending' && (
 												<span
 													className={`inline-block rounded-[3px] w-3 h-3 bg-red-300`}></span>
 											)}

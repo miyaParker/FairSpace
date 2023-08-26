@@ -6,7 +6,13 @@ import {
 import {child, push, query, ref, set} from 'firebase/database';
 import initDB from './initDB';
 
-export function createAdmin({email, password}) {
+export function createAdmin({
+	email,
+	password,
+}: {
+	email: string;
+	password: string;
+}) {
 	const db = initDB();
 	const auth = getAuth();
 
@@ -32,7 +38,13 @@ export function createAdmin({email, password}) {
 		});
 }
 
-export function signInAdmin({email, password}) {
+export function signInAdmin({
+	email,
+	password,
+}: {
+	email: string;
+	password: string;
+}) {
 	initDB();
 	const auth = getAuth();
 	const db = initDB();
@@ -62,7 +74,13 @@ export function signInAdmin({email, password}) {
 		});
 }
 
-export function createUser({email, password}) {
+export function createUser({
+	email,
+	password,
+}: {
+	email: string;
+	password: string;
+}) {
 	initDB();
 	const auth = getAuth();
 	return createUserWithEmailAndPassword(auth, email, password)
@@ -82,7 +100,7 @@ export function createUser({email, password}) {
 		});
 }
 
-export function signIn({email, password}) {
+export function signIn({email, password}: {email: string; password: string}) {
 	initDB();
 	const auth = getAuth();
 	return signInWithEmailAndPassword(auth, email, password)
