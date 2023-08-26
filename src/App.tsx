@@ -21,12 +21,10 @@ function App() {
 			<AuthProvider>
 				<Routes>
 					<Route
-						path={
-							user?.isAdmin || user?.isSuperAdmin
-								? '/admin/dashboard'
-								: '/app/incidents'
+						path=''
+						element={
+							user?.isAdmin || user?.isSuperAdmin ? <AdminLogin /> : <Login />
 						}
-						element={<Incidents />}
 					/>
 					<Route path='/auth/login' element={<Login />} />
 					<Route path='/auth/register' element={<Signup />} />

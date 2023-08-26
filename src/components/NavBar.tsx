@@ -4,6 +4,7 @@ import {motion, AnimatePresence} from 'framer-motion';
 
 const NavBar = ({title}: {title: string}) => {
 	const {user, logout} = useContext(UserContext);
+	console.log(user);
 	const [showDropdown, setShowDropdown] = useState(false);
 
 	return (

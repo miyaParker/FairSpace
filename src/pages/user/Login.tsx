@@ -11,9 +11,11 @@ const Login = () => {
 		password: '',
 	});
 	const navigate = useNavigate();
+
 	useEffect(() => {
-		if (authUser) navigate('/app/incidents');
-	}, []);
+		console.log(authUser);
+		if (Object.keys(authUser).length) navigate('/app/incidents');
+	}, [authUser]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();

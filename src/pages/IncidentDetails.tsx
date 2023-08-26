@@ -72,11 +72,14 @@ const Incidents = () => {
 		setIncident(data);
 	};
 	const createDateString = (date) => {
-		const stringArray = date?.split('/');
-		const day = stringArray[0];
-		const month = monthArray[parseInt(stringArray[1]) - 1];
-		const year = stringArray[2];
-		return `${month} ${day}, ${year} `;
+		console.log(date);
+		if (date) {
+			const stringArray = date?.split('/');
+			const day = stringArray[0];
+			const month = monthArray[parseInt(stringArray[1]) - 1];
+			const year = stringArray[2];
+			return `${month} ${day}, ${year} `;
+		}
 	};
 	useEffect(() => {
 		getIncidentById(incidentId, fetchCallback);
@@ -93,13 +96,13 @@ const Incidents = () => {
 							?.substring(4, 10)
 							.toUpperCase()}`}
 					/>
-					{incident && (
+					{Object.keys(incident).length ? (
 						<div className=' overflow-y-scroll w-full text-[17px] mb-[90px]'>
 							<div className='flex justify-between items-start'>
 								<div className='flex my-[40px] gap-[20px]'>
 									<div className='flex flex-col gap-[5px]'>
 										<p className='font-medium text-[20px] max-w-[800px] text-black'>
-											{createDateString(incident.date)}
+											{createDateString(incident?.date)}
 										</p>
 										<p className='text-[17px] max-w-[800px] text-gray/90'>
 											Date
@@ -481,7 +484,7 @@ const Incidents = () => {
 								</div>
 							)}
 						</div>
-					)}
+					) : null}
 				</div>
 			</DashboardLayout>
 		</div>

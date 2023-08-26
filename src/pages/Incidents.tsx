@@ -7,6 +7,7 @@ import AuthContext from '../contexts/rename/AuthContext';
 import {Incident} from '../components/IncidentReportForm';
 import firebase from 'firebase/compat/app';
 import DataSnapshot = firebase.database.DataSnapshot;
+import {Link} from 'react-router-dom';
 const Incidents = () => {
 	const {user} = useContext(AuthContext);
 	const monthArray = [
@@ -71,9 +72,9 @@ const Incidents = () => {
 							<p className='w-1/5 text-gray'>Status</p>
 						</div>
 						{incidents.map((incident: Incident) => (
-							<a
+							<Link
 								key={incident?.id}
-								href={
+								to={
 									user?.isAdmin || user?.isSuperAdmin
 										? `/admin/incidents/${incident.id}`
 										: `/app/incidents/${incident.id}`
@@ -110,7 +111,7 @@ const Incidents = () => {
 									</div>
 									<div className='h-[1px] bg-[#E7E9EF] my-[20px]'></div>
 								</div>
-							</a>
+							</Link>
 						))}
 					</div>
 				</div>

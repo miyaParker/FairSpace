@@ -12,7 +12,10 @@ const AdminLogin = () => {
 	});
 	const navigate = useNavigate();
 	useEffect(() => {
-		if (authUser && (authUser?.isAdmin || authUser?.isSuperAdmin)) {
+		if (
+			Object.keys(authUser).length &&
+			(authUser?.isAdmin || authUser?.isSuperAdmin)
+		) {
 			navigate('/admin/dashboard');
 		}
 	}, []);

@@ -1,5 +1,5 @@
 import UserContext from './AuthContext';
-import {ReactNode, useState} from 'react';
+import {ReactNode, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import User = firebase.User;
@@ -24,6 +24,10 @@ const AuthProvider = ({children}: {children: ReactNode}) => {
 		}
 		navigate('/auth/login');
 	};
+	useEffect(() => {
+		const userObject = localStorage.getItem('user');
+		if (userObject) setUser(JSON.parse(userObject));
+	}, []);
 
 	return (
 		<UserContext.Provider value={{user, login, logout}}>
