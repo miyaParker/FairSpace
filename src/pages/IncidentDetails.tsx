@@ -372,7 +372,7 @@ const Incidents = () => {
 																		{feedbackItem.response}
 																	</p>
 																</div>
-																<p className='absolute leading-[100%] right-0 flex-shrink-0 text-[15px] text-gray/90 w-max font-medium text-[17px] w-max text-black'>
+																<p className='absolute leading-[100%] right-0 flex-shrink-0 text-[15px] text-gray/90'>
 																	{`${dateArr[1]} ${dateArr[2]}, ${dateArr[3]}`}
 																</p>
 															</div>

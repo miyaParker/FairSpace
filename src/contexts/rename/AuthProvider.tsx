@@ -4,11 +4,10 @@ import {useNavigate} from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import User = firebase.User;
 
+type UserType = User & {isAdmin: boolean; isSuperAdmin: boolean; role: string};
 const AuthProvider = ({children}: {children: ReactNode}) => {
 	const navigate = useNavigate();
-	const [user, setUser] = useState(
-		{} as User & {isAdmin: boolean; isSuperAdmin: boolean; role: string}
-	);
+	const [user, setUser] = useState<UserType | null>(null);
 
 	const login = () => {
 		const userObject = localStorage.getItem('user');
@@ -16,6 +15,7 @@ const AuthProvider = ({children}: {children: ReactNode}) => {
 	};
 
 	const logout = () => {
+		setUser(null);
 		const isAdmin = user?.isAdmin || user?.isSuperAdmin;
 		localStorage.removeItem('user');
 		if (isAdmin) {

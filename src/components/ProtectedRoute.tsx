@@ -6,8 +6,7 @@ const ProtectedRoute = ({children}: {children: ReactNode}) => {
 	const {user} = useContext(UserContext);
 	const navigate = useNavigate();
 	useEffect(() => {
-		console.log('USER', user);
-		if (!Object.keys(user).length) {
+		if (!user) {
 			navigate('/auth/login');
 		}
 	}, []);

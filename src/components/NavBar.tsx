@@ -4,7 +4,6 @@ import {motion, AnimatePresence} from 'framer-motion';
 
 const NavBar = ({title}: {title: string}) => {
 	const {user, logout} = useContext(UserContext);
-	console.log(user);
 	const [showDropdown, setShowDropdown] = useState(false);
 
 	return (
@@ -22,7 +21,7 @@ const NavBar = ({title}: {title: string}) => {
 						<img src='/profile.svg' width={24} height={24} />
 					</div>
 
-					<p className='font-medium'>{user.email}</p>
+					<p className='font-medium'>{user && user.email}</p>
 					<button>
 						<img src='/arrow-down.svg' width={24} height={24} />
 					</button>

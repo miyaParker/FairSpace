@@ -13,8 +13,7 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		console.log(authUser);
-		if (Object.keys(authUser).length) navigate('/app/incidents');
+		if (authUser) navigate('/app/incidents');
 	}, [authUser]);
 
 	const handleSubmit = (e) => {
