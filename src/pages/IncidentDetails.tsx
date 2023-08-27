@@ -59,11 +59,12 @@ const Incidents = () => {
 		const feedback = {
 			date: new Date().getTime(),
 			response,
-			from: user?.isAdmin
-				? user.email
-				: user?.contactInformation
-				? user?.contactInformation
-				: 'anonymous@fairspace.com',
+			from:
+				user?.isAdmin || user?.isSuperAdmin
+					? user.email
+					: user?.contactInformation
+					? user?.contactInformation
+					: 'anonymous@fairspace.com',
 		};
 		const prevFeedback = incident?.feedback ? incident.feedback : [];
 		const body = {
@@ -385,208 +386,206 @@ const Incidents = () => {
 								</div>
 							)}
 							{incident.status !== 'Pending' &&
-								incident?.feedback &&
-								incident?.feedback?.length && (
-									<div className='relative max-w-[800px] mb-[40px]'>
-										<p className='text-[24px] font-semibold mb-[20px]'>
-											Feedback Thread
-										</p>
-										<div className='mb-[20px] border-l border-l-4 px-8'>
-											{incident.feedback
-												.sort((a, b) => parseInt(a.date) - parseInt(b.date))
-												.map((feedbackItem, index) => {
-													const dateArr = new Date(feedbackItem.date)
-														.toDateString()
-														.split(' ');
-													return (
-														<>
-															<div className='relative items-start mb-[30px] flex gap-[10px]'>
-																<img
-																	src='/profile.svg'
-																	width={24}
-																	height={24}
-																/>
-																<div>
-																	<p className='text-[15px] text-gray/90 mb-[12px] leading-[100%]'>
-																		{feedbackItem.from}
-																	</p>
-																	<p className='text-[20px] p-0'>
-																		{feedbackItem.response}
-																	</p>
-																</div>
-																<p className='absolute leading-[100%] right-0 flex-shrink-0 text-[15px] text-gray/90'>
-																	{`${dateArr[1]} ${dateArr[2]}, ${dateArr[3]}`}
+							incident?.feedback &&
+							incident?.feedback?.length ? (
+								<div className='relative max-w-[800px] mb-[40px]'>
+									<p className='text-[24px] font-semibold mb-[20px]'>
+										Feedback Thread
+									</p>
+									<div className='mb-[20px] border-l border-l-4 px-8'>
+										{incident.feedback
+											.sort((a, b) => parseInt(a.date) - parseInt(b.date))
+											.map((feedbackItem, index) => {
+												const dateArr = new Date(feedbackItem.date)
+													.toDateString()
+													.split(' ');
+												return (
+													<div key={index}>
+														<div className='relative items-start mb-[30px] flex gap-[10px]'>
+															<img src='/profile.svg' width={24} height={24} />
+															<div>
+																<p className='text-[15px] text-gray/90 mb-[12px] leading-[100%]'>
+																	{feedbackItem.from}
+																</p>
+																<p className='text-[20px] p-0'>
+																	{feedbackItem.response}
 																</p>
 															</div>
-															{incident?.feedback &&
-																index < incident?.feedback.length - 1 && (
-																	<div className='w-full h-[1px] bg-gray/20 my-[20px]'></div>
-																)}
-														</>
-													);
-												})}
-										</div>
+															<p className='absolute leading-[100%] right-0 flex-shrink-0 text-[15px] text-gray/90'>
+																{`${dateArr[1]} ${dateArr[2]}, ${dateArr[3]}`}
+															</p>
+														</div>
+														{incident?.feedback &&
+															index < incident?.feedback.length - 1 && (
+																<div className='w-full h-[1px] bg-gray/20 my-[20px]'></div>
+															)}
+													</div>
+												);
+											})}
 									</div>
-								)}
+								</div>
+							) : null}
+							{console.log(incident.reportedBy)}
 							{incident.status !== 'Resolved' &&
-								(incident?.investigator === user.email ||
-									(user.uid === incident.reportedBy &&
-										incident?.feedback &&
-										incident?.feedback?.length)) && (
-									<div className='relative max-w-[800px]'>
-										<label className='text-[24px] font-semibold mb-[10px]'>
-											{user?.isAdmin || user?.isSuperAdmin
-												? 'Admin Feedback:'
-												: 'User Response:'}
-										</label>
-										<textarea
-											required={true}
-											value={response}
-											onChange={(e) => setResponse(e.target.value)}
-											rows={5}
-											className='mb-[20px] w-full rounded-[28px] p-8 bg-white text-[22px] mt-4 text-black block border border-black'
+							(incident?.investigator === user.email ||
+								(user.uid === incident.reportedBy &&
+									incident?.feedback &&
+									incident?.feedback?.length)) ? (
+								<div className='relative max-w-[800px]'>
+									<label className='text-[24px] font-semibold mb-[10px]'>
+										{user?.isAdmin || user?.isSuperAdmin
+											? 'Admin Feedback:'
+											: 'User Response:'}
+									</label>
+									<textarea
+										required={true}
+										value={response}
+										onChange={(e) => setResponse(e.target.value)}
+										rows={5}
+										className='mb-[20px] w-full rounded-[28px] p-8 bg-white text-[22px] mt-4 text-black block border border-black'
+									/>
+									<div className='absolute right-0 w-max cursor-pointer gap-[10px] rounded-[40px] bg-black flex justify-center px-[20px] py-[15px]'>
+										<button
+											onClick={() => {
+												if (response) {
+													sendFeedback();
+												}
+											}}
+											className='text-white font-semibold text-[16px]'>
+											Send Response
+										</button>
+										<img
+											src='/send.svg'
+											width={24}
+											height={24}
+											className='rotate-[45deg]'
 										/>
-										<div className='absolute right-0 w-max cursor-pointer gap-[10px] rounded-[40px] bg-black flex justify-center px-[20px] py-[15px]'>
-											<button
-												onClick={() => {
-													if (response) {
-														sendFeedback();
-													}
-												}}
-												className='text-white font-semibold text-[16px]'>
-												Send Response
-											</button>
-											<img
-												src='/send.svg'
-												width={24}
-												height={24}
-												className='rotate-[45deg]'
-											/>
-										</div>
 									</div>
-								)}
+								</div>
+							) : null}
 							{incident?.rating &&
-								incident.status === 'Resolved' &&
-								incident.rating > 0 && (
-									<div className='mb-[20px]'>
-										<p className='text-[24px] font-semibold mb-[10px] '>
-											Feedback Rating
-										</p>
+							incident.status === 'Resolved' &&
+							incident.rating > 0 ? (
+								<div className='mb-[20px]'>
+									<p className='text-[24px] font-semibold mb-[10px] '>
+										Feedback Rating
+									</p>
+									<div className='flex gap-x-2'>
 										<div className='flex gap-x-2'>
+											{incident?.rating &&
+												Array.from(Array(incident?.rating).keys()).map(() => (
+													<img
+														src={
+															incident?.rating && incident?.rating > 3
+																? '/star-green.svg'
+																: '/star-orange.svg'
+														}
+														width={24}
+														height={24}
+													/>
+												))}
+											{Array.from(Array(5 - incident?.rating).keys()).map(
+												() => (
+													<img src='/star-gray.svg' width={24} height={24} />
+												)
+											)}
+										</div>
+									</div>
+								</div>
+							) : null}
+							{incident.status === 'Resolved'
+								? incident.rating === 0 &&
+								  user.uid !== incident.reportedBy && (
+										<div className='mb-[20px] flex gap-[20px]'>
+											<p className='text-[28px] font-semibold mb-[10px] '>
+												Feedback Rating
+											</p>
 											<div className='flex gap-x-2'>
-												{incident?.rating &&
-													Array.from(Array(incident?.rating).keys()).map(() => (
-														<img
-															src={
-																incident?.rating && incident?.rating > 3
-																	? '/star-green.svg'
-																	: '/star-orange.svg'
-															}
-															width={24}
-															height={24}
-														/>
-													))}
-												{Array.from(Array(5 - incident?.rating).keys()).map(
-													() => (
-														<img src='/star-gray.svg' width={24} height={24} />
-													)
-												)}
+												{Array.from(Array(5).keys()).map(() => (
+													<img src='/star-gray.svg' width={24} height={24} />
+												))}
 											</div>
 										</div>
-									</div>
-								)}
+								  )
+								: null}
 							{incident.status === 'Resolved' &&
-								incident.rating === 0 &&
-								user.uid !== incident.reportedBy && (
-									<div className='mb-[20px] flex gap-[20px]'>
-										<p className='text-[28px] font-semibold mb-[10px] '>
-											Feedback Rating
-										</p>
-										<div className='flex gap-x-2'>
-											{Array.from(Array(5).keys()).map(() => (
-												<img src='/star-gray.svg' width={24} height={24} />
-											))}
+							incident.rating === 0 &&
+							user.uid === incident.reportedBy ? (
+								<div className='flex flex-col items-center justify-center gap-[20px] my-[60px] '>
+									<p className='text-[28px] font-semibold'>
+										Rate Your Experience
+									</p>
+									<div className='flex gap-x-2 '>
+										<div className='rate'>
+											<input
+												onChange={(e) => setRating(parseInt(e.target.value))}
+												type='radio'
+												id='star5'
+												name='rate'
+												value='5'
+											/>
+											<label
+												htmlFor='star5'
+												title='text'
+												className='mr-1 inline-block'>
+												5 stars
+											</label>
+											<input
+												onChange={(e) => setRating(parseInt(e.target.value))}
+												type='radio'
+												id='star4'
+												name='rate'
+												value='4'
+											/>
+											<label
+												htmlFor='star4'
+												title='text'
+												className='mr-1 inline-block'>
+												4 stars
+											</label>
+											<input
+												onChange={(e) => setRating(parseInt(e.target.value))}
+												type='radio'
+												id='star3'
+												name='rate'
+												value='3'
+											/>
+											<label
+												htmlFor='star3'
+												title='text'
+												className='mr-1 inline-block'>
+												3 stars
+											</label>
+											<input
+												onChange={(e) => setRating(parseInt(e.target.value))}
+												type='radio'
+												id='star2'
+												name='rate'
+												value='2'
+											/>
+											<label
+												htmlFor='star2'
+												title='text'
+												className='mr-1 inline-block'>
+												2 stars
+											</label>
+											<input
+												onChange={(e) => setRating(parseInt(e.target.value))}
+												type='radio'
+												id='star1'
+												name='rate'
+												value='1'
+											/>
+											<label
+												htmlFor='star1'
+												title='text'
+												className='mr-1 inline-block'>
+												1 star
+											</label>
 										</div>
 									</div>
-								)}
-							{incident.status === 'Resolved' &&
-								incident.rating === 0 &&
-								user.uid === incident.reportedBy && (
-									<div className='flex flex-col items-center justify-center gap-[20px] my-[60px] '>
-										<p className='text-[28px] font-semibold'>
-											Rate Your Experience
-										</p>
-										<div className='flex gap-x-2 '>
-											<div className='rate'>
-												<input
-													onChange={(e) => setRating(parseInt(e.target.value))}
-													type='radio'
-													id='star5'
-													name='rate'
-													value='5'
-												/>
-												<label
-													htmlFor='star5'
-													title='text'
-													className='mr-1 inline-block'>
-													5 stars
-												</label>
-												<input
-													onChange={(e) => setRating(parseInt(e.target.value))}
-													type='radio'
-													id='star4'
-													name='rate'
-													value='4'
-												/>
-												<label
-													htmlFor='star4'
-													title='text'
-													className='mr-1 inline-block'>
-													4 stars
-												</label>
-												<input
-													onChange={(e) => setRating(parseInt(e.target.value))}
-													type='radio'
-													id='star3'
-													name='rate'
-													value='3'
-												/>
-												<label
-													htmlFor='star3'
-													title='text'
-													className='mr-1 inline-block'>
-													3 stars
-												</label>
-												<input
-													onChange={(e) => setRating(parseInt(e.target.value))}
-													type='radio'
-													id='star2'
-													name='rate'
-													value='2'
-												/>
-												<label
-													htmlFor='star2'
-													title='text'
-													className='mr-1 inline-block'>
-													2 stars
-												</label>
-												<input
-													onChange={(e) => setRating(parseInt(e.target.value))}
-													type='radio'
-													id='star1'
-													name='rate'
-													value='1'
-												/>
-												<label
-													htmlFor='star1'
-													title='text'
-													className='mr-1 inline-block'>
-													1 star
-												</label>
-											</div>
-										</div>
-									</div>
-								)}
+								</div>
+							) : null}
 						</div>
 					) : null}
 				</div>

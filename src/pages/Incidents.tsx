@@ -8,8 +8,9 @@ import {Incident} from '../components/IncidentReportForm';
 import firebase from 'firebase/compat/app';
 import DataSnapshot = firebase.database.DataSnapshot;
 import {Link} from 'react-router-dom';
+
 const Incidents = () => {
-	const {user} = useContext(AuthContext);
+	const {user, login} = useContext(AuthContext);
 	const monthArray = [
 		'Jan',
 		'Feb',
@@ -32,7 +33,6 @@ const Incidents = () => {
 	};
 	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
-		console.log(data);
 		if (data) {
 			const incidentsArr = Object.values(data) as Incident[];
 			setIncidents(incidentsArr);
@@ -46,6 +46,9 @@ const Incidents = () => {
 		return `${month} ${day}, ${year} `;
 	};
 	useEffect(() => {
+		login();
+	}, []);
+	useEffect(() => {
 		fetchIncidents(fetchCallback);
 	}, []);
 
@@ -55,7 +58,8 @@ const Incidents = () => {
 				<div className='h-full w-full pr-[40px] flex flex-col'>
 					<NavBar title='Incidents' />
 					<div className='pt-[20px] flex justify-end pb-[30px]'>
-						{!(user?.isAdmin || user?.isSuperAdmin) && (
+						{console.log(user?.isAdmin || user?.isSuperAdmin)}
+						{!(user && (user?.isAdmin || user?.isSuperAdmin)) && (
 							<div className='cursor-pointer rounded-[40px] bg-black flex gap-x-[10px] px-[20px] py-[15px]'>
 								<img src='/plus.svg' width={16} height={16} />
 								<button

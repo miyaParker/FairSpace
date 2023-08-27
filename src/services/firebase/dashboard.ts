@@ -14,7 +14,29 @@ import {
 } from 'firebase/database';
 import {Incident} from '../../components/IncidentReportForm';
 
-export const createIncident = (data: Incident) => {
+export const createIncident = (data: {
+	date: string;
+	severity: string;
+	comments?: string;
+	evidence: string;
+	desiredOutcome?: string;
+	confidentiality: string;
+	incidentType: 'Discrimination' | 'Harassment' | 'Bias' | string;
+	rating?: number;
+	description: string;
+	reportedBy: string;
+	feedback?: Feedback[];
+	createdAt: number;
+	investigator?: string;
+	contactInformation?: string;
+	emotionalImpact?: string;
+	partiesInvolved: string;
+	location: string;
+	time: string;
+	id?: string;
+	status: 'Pending' | 'Under Review' | 'Resolved' | string;
+	witnesses: string;
+}) => {
 	const db = initDB();
 
 	const reportId = push(child(ref(db), 'incidents')).key;

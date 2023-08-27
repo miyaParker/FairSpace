@@ -12,6 +12,8 @@ export interface Feedback {
 }
 
 export interface Incident {
+	createdAt: string;
+	reportedBy: string;
 	date: string;
 	time: string;
 	location: string;
@@ -31,7 +33,6 @@ export interface Incident {
 	confidentiality: string;
 	contactInformation?: string;
 	comments?: string;
-	reportedBy?: string;
 }
 
 const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
@@ -60,6 +61,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 		location: '',
 		incidentType: '',
 		status: 'Pending',
+		reportedBy: '',
 		severity: '',
 		description: '',
 		partiesInvolved: '',
@@ -72,6 +74,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 		comments: '',
 		rating: 0,
 		feedback: [],
+		createdAt: '',
 	});
 	const [error, setError] = useState({key: 0, value: ''});
 	const goNext = () => {
@@ -84,8 +87,9 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 	};
 	const handleSubmit = () => {
 		const data = {
-			reportedBy: user?.uid,
 			...formData,
+			reportedBy: user.uid,
+			createdAt: new Date().getTime(),
 		};
 		console.log(data);
 		setLoading(true);

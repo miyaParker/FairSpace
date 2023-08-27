@@ -3,13 +3,14 @@ import UserContext from '../contexts/AuthContext';
 import {motion, AnimatePresence} from 'framer-motion';
 
 const NavBar = ({title}: {title: string}) => {
-	const {logout} = useContext(UserContext);
+	const {user, login, logout} = useContext(UserContext);
 	const [email, setEmail] = useState('');
 	const [showDropdown, setShowDropdown] = useState(false);
 	useEffect(() => {
-		const userObj = localStorage.getItem('user');
-		if (userObj) {
-			const user = JSON.parse(userObj);
+		login();
+	}, []);
+	useEffect(() => {
+		if (user) {
 			setEmail(user.email);
 		}
 	}, []);

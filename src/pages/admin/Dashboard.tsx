@@ -20,7 +20,7 @@ import UserContext from '../../contexts/AuthContext';
 import DataSnapshot = firebase.database.DataSnapshot;
 
 const Incidents = () => {
-	const {user} = useContext(UserContext);
+	const {user, login} = useContext(UserContext);
 	const monthArray = [
 		'Jan',
 		'Feb',
@@ -72,6 +72,10 @@ const Incidents = () => {
 		const year = stringArray[2];
 		return `${month} ${day}, ${year} `;
 	};
+	useEffect(() => {
+		login();
+	}, []);
+
 	useEffect(() => {
 		if (user?.isAdmin) {
 			fetchAssignedCases(user.email, fetchCallback);
@@ -143,10 +147,10 @@ const Incidents = () => {
 							<p className='text-center text-[42px] leading-[120%] font-bold'>
 								{pendingIncidents.length ? pendingIncidents.length : 'No data'}
 							</p>
-							<p className='text-center text-[18px] font-semibold'>
+							<p className='text-center text-[20px] font-semibold'>
 								{user?.isAdmin
 									? 'Pending Incidents'
-									: 'Total Incidents Reported'}
+									: 'Total Pending Incidents'}
 							</p>
 						</div>
 						<div className='drop-shadow-xl w-1/3 flex-shrink-0 py-[40px] bg-[#8FB8ED] bg-opacity-30 rounded-[20px]'>

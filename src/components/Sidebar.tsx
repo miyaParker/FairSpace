@@ -82,8 +82,8 @@ const Sidebar = () => {
 					<p className='text-[28px] font-medium'>FairSpace</p>
 				</div>
 			</Link>
-
-			{user?.isAdmin
+			{console.log('USER', user)}
+			{user && user?.isAdmin
 				? adminLinks.map((link, index) => (
 						<Link key={index} to={link.to}>
 							<div className='flex gap-x-[16px]'>
@@ -92,7 +92,7 @@ const Sidebar = () => {
 							</div>
 						</Link>
 				  ))
-				: user?.isSuperAdmin
+				: user && user?.isSuperAdmin
 				? superAdminLinks.map((link, index) => (
 						<Link key={index} to={link.to}>
 							<div className='flex gap-x-[16px]'>
