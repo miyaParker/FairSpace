@@ -1,7 +1,7 @@
-import {signInAdmin} from '../../services/auth';
+import {signInAdmin} from '../../services/firebase/auth';
 import {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import UserContext from '../../contexts/rename/AuthContext';
+import UserContext from '../../contexts/AuthContext';
 
 const AdminLogin = () => {
 	const {user: authUser, login} = useContext(UserContext);
@@ -23,7 +23,9 @@ const AdminLogin = () => {
 			signInAdmin(user).then((res) => {
 				if (res && res?.user) {
 					login();
-					navigate('/admin/dashboard');
+					setTimeout(() => {
+						navigate('/admin/dashboard');
+					}, 3000);
 				} else {
 					if (res && res?.error) setError(res.error);
 				}

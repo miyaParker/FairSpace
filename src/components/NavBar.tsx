@@ -1,10 +1,18 @@
-import {useContext, useState} from 'react';
-import UserContext from '../contexts/rename/AuthContext';
+import {useContext, useEffect, useState} from 'react';
+import UserContext from '../contexts/AuthContext';
 import {motion, AnimatePresence} from 'framer-motion';
 
 const NavBar = ({title}: {title: string}) => {
-	const {user, logout} = useContext(UserContext);
+	const {logout} = useContext(UserContext);
+	const [email, setEmail] = useState('');
 	const [showDropdown, setShowDropdown] = useState(false);
+	useEffect(() => {
+		const userObj = localStorage.getItem('user');
+		if (userObj) {
+			const user = JSON.parse(userObj);
+			setEmail(user.email);
+		}
+	}, []);
 
 	return (
 		<nav className='self-end w-full border-b border-gray border-opacity-20 flex justify-between mb-[40px] py-[30px] relative '>
@@ -21,7 +29,7 @@ const NavBar = ({title}: {title: string}) => {
 						<img src='/profile.svg' width={24} height={24} />
 					</div>
 
-					<p className='font-medium'>{user && user.email}</p>
+					<p className='font-medium'>{email}</p>
 					<button>
 						<img src='/arrow-down.svg' width={24} height={24} />
 					</button>

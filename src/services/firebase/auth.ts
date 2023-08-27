@@ -3,8 +3,18 @@ import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 } from 'firebase/auth';
-import {child, push, query, ref, set} from 'firebase/database';
+import {
+	child,
+	equalTo,
+	onValue,
+	orderByChild,
+	push,
+	query,
+	ref,
+	set,
+} from 'firebase/database';
 import initDB from './initDB';
+import {initNotif} from './initNotif';
 
 export function createAdmin({
 	email,
@@ -20,13 +30,18 @@ export function createAdmin({
 		.then((userCredential) => {
 			const user = userCredential.user;
 			const adminId = push(child(ref(db), 'admin')).key;
-			set(ref(db, 'admin/' + adminId), {uid: user.uid, role: 'ADMIN'}).catch(
-				(err) => console.error(err)
-			);
+
+			set(ref(db, 'admin/' + adminId), {
+				uid: user.uid,
+				role: 'ADMIN',
+				isAdmin: true,
+				email: user.email,
+			}).catch((err) => console.error(err));
 			localStorage.setItem(
 				'user',
 				JSON.stringify({...user, role: 'ADMIN', isAdmin: true})
 			);
+			initNotif();
 			return {user, error: null};
 		})
 		.catch((error) => {
@@ -48,30 +63,44 @@ export function signInAdmin({
 	initDB();
 	const auth = getAuth();
 	const db = initDB();
-	return signInWithEmailAndPassword(auth, email, password)
-		.then((userCredential) => {
-			const user = userCredential.user;
-			const adminRef = query(ref(db, 'admin/' + user.uid));
-			if (adminRef) {
-				localStorage.setItem(
-					'user',
-					JSON.stringify({...user, role: 'ADMIN', isAdmin: true})
+	return (
+		signInWithEmailAndPassword(auth, email, password)
+			.then((userCredential) => {
+				const user = userCredential.user;
+				const adminRef = query(
+					ref(db, 'admin/'),
+					orderByChild('uid'),
+					equalTo(user.uid)
 				);
+				onValue(adminRef, (snapshot) => {
+					const admin = Object.values(snapshot.val())[0];
+					localStorage.setItem(
+						'user',
+						JSON.stringify({
+							...user,
+							role: 'ADMIN',
+							isAdmin: admin?.isAdmin,
+							isSuperAdmin: admin?.isSuperAdmin,
+						})
+					);
+					initNotif();
+					console.log(user);
+				});
 				return {user, error: null};
-			}
-			return {user: null, error: 'Not an admin'};
-		})
-		.catch((error) => {
-			const errorMessage = error.message;
-			const wrongCredentials = errorMessage.includes('wrong-password');
-			const userNotFound = errorMessage.includes('user-not-found');
-			if (wrongCredentials) {
-				return {user: null, error: 'User not found'};
-			}
-			if (userNotFound) {
-				return {user: null, error: 'Wrong credentials'};
-			}
-		});
+			})
+			// .then((data) => data)
+			.catch((error) => {
+				const errorMessage = error.message;
+				const wrongCredentials = errorMessage.includes('wrong-password');
+				const userNotFound = errorMessage.includes('user-not-found');
+				if (wrongCredentials) {
+					return {user: null, error: 'User not found'};
+				}
+				if (userNotFound) {
+					return {user: null, error: 'Wrong credentials'};
+				}
+			})
+	);
 }
 
 export function createUser({
@@ -87,6 +116,7 @@ export function createUser({
 		.then((userCredential) => {
 			const user = userCredential.user;
 			localStorage.setItem('user', JSON.stringify(user));
+			initNotif();
 			return {user, error: null};
 		})
 		.catch((error) => {
@@ -107,6 +137,7 @@ export function signIn({email, password}: {email: string; password: string}) {
 		.then((userCredential) => {
 			const user = userCredential.user;
 			localStorage.setItem('user', JSON.stringify(user));
+			initNotif();
 			return {user, error: null};
 		})
 		.catch((error) => {

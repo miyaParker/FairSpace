@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {motion} from 'framer-motion';
-import {createIncident} from '../services/dashboard';
+import {createIncident} from '../services/firebase/dashboard';
 import Loader from './Loader';
 import firebase from 'firebase/compat/app';
 import User = firebase.User;
@@ -31,6 +31,7 @@ export interface Incident {
 	confidentiality: string;
 	contactInformation?: string;
 	comments?: string;
+	reportedBy?: string;
 }
 
 const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
@@ -83,9 +84,10 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 	};
 	const handleSubmit = () => {
 		const data = {
-			uid: user?.uid,
+			reportedBy: user?.uid,
 			...formData,
 		};
+		console.log(data);
 		setLoading(true);
 		createIncident(data);
 		setTimeout(() => {

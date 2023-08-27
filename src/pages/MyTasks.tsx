@@ -1,14 +1,14 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import {useState, useEffect, useContext} from 'react';
 import IncidentReportForm from '../components/IncidentReportForm';
-import {fetchIncidents} from '../services/firebase/dashboard';
+import {fetchAssignedCases} from '../services/firebase/dashboard';
 import NavBar from '../components/NavBar';
 import AuthContext from '../contexts/AuthContext';
 import {Incident} from '../components/IncidentReportForm';
 import firebase from 'firebase/compat/app';
 import DataSnapshot = firebase.database.DataSnapshot;
 import {Link} from 'react-router-dom';
-const Incidents = () => {
+const MyTasks = () => {
 	const {user} = useContext(AuthContext);
 	const monthArray = [
 		'Jan',
@@ -32,7 +32,6 @@ const Incidents = () => {
 	};
 	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
-		console.log(data);
 		if (data) {
 			const incidentsArr = Object.values(data) as Incident[];
 			setIncidents(incidentsArr);
@@ -46,7 +45,7 @@ const Incidents = () => {
 		return `${month} ${day}, ${year} `;
 	};
 	useEffect(() => {
-		fetchIncidents(fetchCallback);
+		fetchAssignedCases(user.email, fetchCallback);
 	}, []);
 
 	return (
@@ -123,4 +122,4 @@ const Incidents = () => {
 		</div>
 	);
 };
-export default Incidents;
+export default MyTasks;

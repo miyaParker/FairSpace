@@ -1,10 +1,10 @@
-import {createUser} from '../../services/auth';
+import {createUser} from '../../services/firebase/auth';
 import {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import UserContext from '../../contexts/rename/AuthContext';
+import UserContext from '../../contexts/AuthContext';
 
 const Signup = () => {
-	const auth = useContext(UserContext);
+	const {user: authUser, login} = useContext(UserContext);
 	const navigate = useNavigate();
 	const [error, setError] = useState('');
 	const [user, setUser] = useState({
@@ -13,7 +13,7 @@ const Signup = () => {
 	});
 
 	useEffect(() => {
-		if (auth) navigate('/app/incidents');
+		if (authUser) navigate('/app/incidents');
 	}, []);
 
 	const handleSubmit = (e) => {
@@ -21,6 +21,7 @@ const Signup = () => {
 		if (user.email && user.password) {
 			createUser(user).then((res) => {
 				if (res && res?.user) {
+					login();
 					navigate('/app/incidents');
 				} else {
 					if (res && res?.error) setError(res.error);
@@ -35,7 +36,7 @@ const Signup = () => {
 					Welcome to FairSpace
 				</h1>
 				<p className='text-[18px] text-white'>
-					Empower Equity . Embrace Change . Login to FairSpace.
+					Empower Equity . Embrace Change . Join FairSpace.
 				</p>
 
 				<div className='mt-[120px]'>

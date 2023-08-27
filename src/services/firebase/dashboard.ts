@@ -9,6 +9,8 @@ import {
 	query,
 	orderByChild,
 	equalTo,
+	get,
+	getDatabase,
 } from 'firebase/database';
 import {Incident} from '../components/IncidentReportForm';
 
@@ -53,22 +55,36 @@ export const updateIncident = (
 	onSuccess: (snapshot: any) => unknown
 ) => {
 	const db = initDB();
+	const dbRef = ref(getDatabase());
 
-	const incidentsRef = ref(db, 'incidents/' + id);
-	onValue(incidentsRef, (snapshot) => {
-		const data = snapshot.val();
-		const postData = {
-			...data,
-			...body,
-		};
-		const updates = {};
-		updates['/incidents/' + id] = postData;
-		update(ref(db), updates)
-			.then(
-				() =>
-					typeof onSuccess === 'function' &&
-					typeof onSuccess(snapshot) === 'function'
-			)
-			.catch((err) => console.error(err));
-	});
+	get(child(dbRef, `incidents/${id}`))
+		.then((snapshot) => {
+			if (snapshot.exists()) {
+				const data = snapshot.val();
+				const postData = {
+					...data,
+					...body,
+				};
+				const updates = {};
+				updates['/incidents/' + id] = postData;
+				update(ref(db), updates)
+					.then(
+						() =>
+							typeof onSuccess === 'function' &&
+							typeof onSuccess(snapshot) === 'function'
+					)
+					.catch((err) => console.error(err));
+			} else {
+				console.log('No data available');
+			}
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+};
+
+export const fetchAdmins = (onSuccess: (snapshot) => void) => {
+	const db = initDB();
+	const adminRef = ref(db, 'admin/');
+	onValue(adminRef, onSuccess);
 };

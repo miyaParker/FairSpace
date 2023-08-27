@@ -1,13 +1,18 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import {useState, useEffect, useContext} from 'react';
-import {getIncidentById, updateIncident} from '../services/dashboard';
+import {
+	getIncidentById,
+	updateIncident,
+	fetchAdmins,
+} from '../services/firebase/dashboard';
 import NavBar from '../components/NavBar';
-import AuthContext from '../contexts/rename/AuthContext';
+import AuthContext from '../contexts/AuthContext';
 import {useParams} from 'react-router-dom';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Incident} from '../components/IncidentReportForm';
 import firebase from 'firebase/compat/app';
 import DataSnapshot = firebase.database.DataSnapshot;
+
 const Incidents = () => {
 	const {incidentId} = useParams();
 	const {user} = useContext(AuthContext);
@@ -31,6 +36,8 @@ const Incidents = () => {
 	const [response, setResponse] = useState('');
 	const [error, setError] = useState('');
 	const [formError, setFormError] = useState('');
+	const [admins, setAdmins] = useState<any>([]);
+	console.log(user);
 	const assignCase = (body) => {
 		if (body.investigator === 'Assign to Me') body['investigator'] = user.email;
 		updateIncident(incident.id, body, (snapshot: DataSnapshot) => {
@@ -40,7 +47,8 @@ const Incidents = () => {
 	const resolveCase = (body) => {
 		if (incident?.feedback && incident.feedback.length) {
 			updateIncident(incident.id, body, () => {
-				getIncidentById(incidentId, fetchCallback);
+				console.log('');
+				// getIncidentById(incidentId, fetchCallback);
 			});
 		} else {
 			setError('Include a feedback to resolve this case:');
@@ -64,15 +72,18 @@ const Incidents = () => {
 			status: 'Under Review',
 		};
 		updateIncident(incident.id, body, () => {
-			getIncidentById(incidentId, fetchCallback);
+			console.log('updated');
 		});
 	};
 	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
 		setIncident(data);
 	};
+	const fetchAdminsCallback = (snapshot: DataSnapshot) => {
+		const data = Object.values(snapshot.val());
+		setAdmins(data);
+	};
 	const createDateString = (date) => {
-		console.log(date);
 		if (date) {
 			const stringArray = date?.split('/');
 			const day = stringArray[0];
@@ -83,9 +94,15 @@ const Incidents = () => {
 	};
 	useEffect(() => {
 		getIncidentById(incidentId, fetchCallback);
+		fetchAdmins(fetchAdminsCallback);
 	}, []);
 	useEffect(() => {
-		console.log(rating);
+		const body = {
+			rating,
+		};
+		updateIncident(incident.id, body, () => {
+			console.log('updated');
+		});
 	}, [rating]);
 	return (
 		<div className='relative'>
@@ -144,6 +161,7 @@ const Incidents = () => {
 								</div>
 								{user?.isAdmin || user?.isSuperAdmin ? (
 									<>
+										{console.log(incident.status, user?.isSuperAdmin)}
 										{incident.status === 'Pending' && user?.isSuperAdmin && (
 											<div
 												onClick={() => setShowDropdown(!showDropdown)}
@@ -165,108 +183,132 @@ const Incidents = () => {
 															whileInView={{opacity: 1, y: 0}}
 															exit={{opacity: 0, y: 20}}
 															className='border border-1 bg-white rounded-[14px] absolute top-[90px] right-[0px] w-[300px] p-[20px]'>
-															<p
-																onClick={(e) =>
-																	assignCase({
-																		investigator: e.currentTarget.textContent,
-																		status: 'Assigned',
-																	})
-																}
-																role='button'
-																className='text-[16px]'>
-																Assign to Me
-															</p>
-															<p
-																className='text-[14px] text-gray/90'
-																role='button'>
-																{user.email}
-															</p>
+															<div className='pb-[6px]'>
+																<p
+																	onClick={(e) =>
+																		assignCase({
+																			investigator: e.currentTarget.textContent,
+																			status: 'Assigned',
+																		})
+																	}
+																	role='button'
+																	className='text-[16px]'>
+																	Assign to Me
+																</p>
+																<p
+																	className='text-[14px] text-gray/90'
+																	role='button'>
+																	{user.email}
+																</p>
+															</div>
+															{admins?.length &&
+																admins.map((admin) => {
+																	if (admin.email !== user.email) {
+																		return (
+																			<p
+																				onClick={(e) =>
+																					assignCase({
+																						investigator:
+																							e.currentTarget.textContent,
+																						status: 'Assigned',
+																					})
+																				}
+																				role='button'
+																				className='text-[15px] py-[6px]'>
+																				{admin.email}
+																			</p>
+																		);
+																	}
+																})}
 														</motion.div>
 													) : null}
 												</AnimatePresence>
 											</div>
 										)}
 										{(incident.status === 'Assigned' ||
-											incident.status === 'Under Review') && (
-											<div className='relative'>
-												<div className='pt-[20px] flex justify-end pb-[30px]'>
-													<div className='cursor-pointer rounded-[40px] gap-[10px] bg-black flex items-center justify-center px-[20px] py-[15px]'>
-														<button
-															onClick={() => {
-																setError('');
-																resolveCase({
-																	status: 'Resolved',
-																});
-															}}
-															className='text-white font-semibold text-[18px]'>
-															Mark as Resolved
-														</button>
-														<img src='/check.svg' width={24} height={24} />
+											incident.status === 'Under Review') &&
+											incident.investigator === user.email && (
+												<div className='relative'>
+													<div className='pt-[20px] flex justify-end pb-[30px]'>
+														<div className='cursor-pointer rounded-[40px] gap-[10px] bg-black flex items-center justify-center px-[20px] py-[15px]'>
+															<button
+																onClick={() => {
+																	setError('');
+																	resolveCase({
+																		status: 'Resolved',
+																	});
+																}}
+																className='text-white font-semibold text-[18px]'>
+																Mark as Resolved
+															</button>
+															<img src='/check.svg' width={24} height={24} />
+														</div>
 													</div>
-												</div>
-												<AnimatePresence>
-													{error && (
-														<motion.form
-															initial={{opacity: 0, y: 10}}
-															whileInView={{opacity: 1, y: 0}}
-															exit={{opacity: 0, y: 20}}
-															className='right-0 w-[300px] absolute pt-[30px] pb-[24px] px-[24px] bg-white drop-shadow-2xl rounded-[20px] text-[18px] cursor-pointer'>
-															<div className='relative'>
-																<div className='w-[32px] h-[32px] rounded-full bg-gray/20 absolute right-0 -top-[10px] flex items-center justify-center'>
-																	<img
-																		src='/close.svg'
-																		width={24}
-																		height={24}
-																		onClick={() => setError('')}
-																		className=''
-																	/>
-																</div>
+													<AnimatePresence>
+														{error && (
+															<motion.form
+																initial={{opacity: 0, y: 10}}
+																whileInView={{opacity: 1, y: 0}}
+																exit={{opacity: 0, y: 20}}
+																className='right-0 w-[300px] absolute pt-[30px] pb-[24px] px-[24px] bg-white drop-shadow-2xl rounded-[20px] text-[18px] cursor-pointer'>
+																<div className='relative'>
+																	<div className='w-[32px] h-[32px] rounded-full bg-gray/20 absolute right-0 -top-[10px] flex items-center justify-center'>
+																		<img
+																			src='/close.svg'
+																			width={24}
+																			height={24}
+																			onClick={() => setError('')}
+																			className=''
+																		/>
+																	</div>
 
-																<label className='text-[18px] font-semibold block mb-[15px]'>
-																	{error}
-																</label>
-																<textarea
-																	required={true}
-																	value={response}
-																	onChange={(e) => setResponse(e.target.value)}
-																	rows={3}
-																	className='w-full rounded-[10px] p-2 bg-white text-[18px] text-black block border border-black'
-																/>
-																<p className='text-red-500 py-[10px]'>
-																	{formError}
-																</p>
-																<button
-																	onClick={() => {
-																		if (response.length) {
-																			setError('');
-																			const feedback = [
-																				{
-																					date: new Date().getTime(),
-																					response,
-																					from: user.email,
-																				},
-																			];
-																			updateIncident(
-																				incident.id,
-																				{feedback, status: 'Resolved'},
-																				() => {
-																					getIncidentById(
-																						incidentId,
-																						fetchCallback
-																					);
-																				}
-																			);
-																		} else setFormError('Required field');
-																	}}
-																	className='mt-[15px] block mx-auto cursor-pointer rounded-[40px] bg-black text-white font-semibold text-[18px] px-[20px] py-[15px]'>
-																	Resolve Case
-																</button>
-															</div>
-														</motion.form>
-													)}
-												</AnimatePresence>
-											</div>
-										)}
+																	<label className='text-[18px] font-semibold block mb-[15px]'>
+																		{error}
+																	</label>
+																	<textarea
+																		required={true}
+																		value={response}
+																		onChange={(e) =>
+																			setResponse(e.target.value)
+																		}
+																		rows={3}
+																		className='w-full rounded-[10px] p-2 bg-white text-[18px] text-black block border border-black'
+																	/>
+																	<p className='text-red-500 py-[10px]'>
+																		{formError}
+																	</p>
+																	<button
+																		onClick={() => {
+																			if (response.length) {
+																				setError('');
+																				const feedback = [
+																					{
+																						date: new Date().getTime(),
+																						response,
+																						from: user.email,
+																					},
+																				];
+																				updateIncident(
+																					incident.id,
+																					{feedback, status: 'Resolved'},
+																					() => {
+																						getIncidentById(
+																							incidentId,
+																							fetchCallback
+																						);
+																					}
+																				);
+																			} else setFormError('Required field');
+																		}}
+																		className='mt-[15px] block mx-auto cursor-pointer rounded-[40px] bg-black text-white font-semibold text-[18px] px-[20px] py-[15px]'>
+																		Resolve Case
+																	</button>
+																</div>
+															</motion.form>
+														)}
+													</AnimatePresence>
+												</div>
+											)}
 									</>
 								) : null}
 							</div>
@@ -387,9 +429,10 @@ const Incidents = () => {
 									</div>
 								)}
 							{incident.status !== 'Resolved' &&
-								(((user?.isAdmin || user?.isSuperAdmin) &&
-									incident?.investigator === user.email) ||
-									(incident?.feedback && incident?.feedback?.length)) && (
+								(incident?.investigator === user.email ||
+									(user.uid === incident.reportedBy &&
+										incident?.feedback &&
+										incident?.feedback?.length)) && (
 									<div className='relative max-w-[800px]'>
 										<label className='text-[24px] font-semibold mb-[10px]'>
 											{user?.isAdmin || user?.isSuperAdmin
@@ -422,67 +465,123 @@ const Incidents = () => {
 										</div>
 									</div>
 								)}
-							{incident.status === 'Resolved' && (
-								<div className='flex flex-col items-center justify-center gap-[20px] my-[60px] '>
-									<p className='text-[28px] font-semibold'>
-										Rate Your Experience
+							{incident.status === 'Resolved' && incident.rating > 0 && (
+								<div className='mb-[20px]'>
+									<p className='text-[24px] font-semibold mb-[10px] '>
+										Feedback Rating
 									</p>
-									<div className='flex gap-x-2 '>
-										<div className='rate'>
-											<input
-												onChange={(e) => setRating(parseInt(e.target.value))}
-												type='radio'
-												id='star5'
-												name='rate'
-												value='5'
-											/>
-											<label htmlFor='star5' title='text'>
-												5 stars
-											</label>
-											<input
-												onChange={(e) => setRating(parseInt(e.target.value))}
-												type='radio'
-												id='star4'
-												name='rate'
-												value='4'
-											/>
-											<label htmlFor='star4' title='text'>
-												4 stars
-											</label>
-											<input
-												onChange={(e) => setRating(parseInt(e.target.value))}
-												type='radio'
-												id='star3'
-												name='rate'
-												value='3'
-											/>
-											<label htmlFor='star3' title='text'>
-												3 stars
-											</label>
-											<input
-												onChange={(e) => setRating(parseInt(e.target.value))}
-												type='radio'
-												id='star2'
-												name='rate'
-												value='2'
-											/>
-											<label htmlFor='star2' title='text'>
-												2 stars
-											</label>
-											<input
-												onChange={(e) => setRating(parseInt(e.target.value))}
-												type='radio'
-												id='star1'
-												name='rate'
-												value='1'
-											/>
-											<label htmlFor='star1' title='text'>
-												1 star
-											</label>
+									<div className='flex gap-x-2'>
+										<div className='flex gap-x-2'>
+											{Array.from(Array(incident.rating).keys()).map(() => (
+												<img
+													src={
+														incident.rating > 3
+															? '/star-green.svg'
+															: '/star-orange.svg'
+													}
+													width={24}
+													height={24}
+												/>
+											))}
+											{Array.from(Array(5 - incident.rating).keys()).map(() => (
+												<img src='/star-gray.svg' width={24} height={24} />
+											))}
 										</div>
 									</div>
 								</div>
 							)}
+							{incident.status === 'Resolved' &&
+								incident.rating === 0 &&
+								user.uid !== incident.reportedBy && (
+									<div className='mb-[20px] flex gap-[20px]'>
+										<p className='text-[28px] font-semibold mb-[10px] '>
+											Feedback Rating
+										</p>
+										<div className='flex gap-x-2'>
+											{Array.from(Array(5).keys()).map(() => (
+												<img src='/star-gray.svg' width={24} height={24} />
+											))}
+										</div>
+									</div>
+								)}
+							{incident.status === 'Resolved' &&
+								incident.rating === 0 &&
+								user.uid === incident.reportedBy && (
+									<div className='flex flex-col items-center justify-center gap-[20px] my-[60px] '>
+										<p className='text-[28px] font-semibold'>
+											Rate Your Experience
+										</p>
+										<div className='flex gap-x-2 '>
+											<div className='rate'>
+												<input
+													onChange={(e) => setRating(parseInt(e.target.value))}
+													type='radio'
+													id='star5'
+													name='rate'
+													value='5'
+												/>
+												<label
+													htmlFor='star5'
+													title='text'
+													className='mr-1 inline-block'>
+													5 stars
+												</label>
+												<input
+													onChange={(e) => setRating(parseInt(e.target.value))}
+													type='radio'
+													id='star4'
+													name='rate'
+													value='4'
+												/>
+												<label
+													htmlFor='star4'
+													title='text'
+													className='mr-1 inline-block'>
+													4 stars
+												</label>
+												<input
+													onChange={(e) => setRating(parseInt(e.target.value))}
+													type='radio'
+													id='star3'
+													name='rate'
+													value='3'
+												/>
+												<label
+													htmlFor='star3'
+													title='text'
+													className='mr-1 inline-block'>
+													3 stars
+												</label>
+												<input
+													onChange={(e) => setRating(parseInt(e.target.value))}
+													type='radio'
+													id='star2'
+													name='rate'
+													value='2'
+												/>
+												<label
+													htmlFor='star2'
+													title='text'
+													className='mr-1 inline-block'>
+													2 stars
+												</label>
+												<input
+													onChange={(e) => setRating(parseInt(e.target.value))}
+													type='radio'
+													id='star1'
+													name='rate'
+													value='1'
+												/>
+												<label
+													htmlFor='star1'
+													title='text'
+													className='mr-1 inline-block'>
+													1 star
+												</label>
+											</div>
+										</div>
+									</div>
+								)}
 						</div>
 					) : null}
 				</div>

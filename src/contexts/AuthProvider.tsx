@@ -15,8 +15,8 @@ const AuthProvider = ({children}: {children: ReactNode}) => {
 	};
 
 	const logout = () => {
-		setUser(null);
 		const isAdmin = user?.isAdmin || user?.isSuperAdmin;
+		setUser(null);
 		localStorage.removeItem('user');
 		if (isAdmin) {
 			navigate('/auth/admin/login');

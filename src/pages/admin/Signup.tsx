@@ -1,7 +1,7 @@
-import {createAdmin} from '../../services/auth';
+import {createAdmin} from '../../services/firebase/auth';
 import {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import UserContext from '../../contexts/rename/AuthContext';
+import UserContext from '../../contexts/AuthContext';
 
 const AdminSignup = () => {
 	const {user: authUser, login} = useContext(UserContext);

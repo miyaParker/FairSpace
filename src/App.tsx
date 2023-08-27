@@ -4,15 +4,16 @@ import Login from './pages/user/Login';
 import Incidents from './pages/Incidents';
 import ProtectedRoute from './components/ProtectedRoute';
 import Feedback from './pages/user/Feedback';
-import LearningHub from './pages/user/LearningHub';
+import LearningHub from './pages/LearningHub';
 import Signup from './pages/user/Signup';
-import AuthProvider from './contexts/rename/AuthProvider';
+import AuthProvider from './contexts/AuthProvider';
 import AdminLogin from './pages/admin/Login';
 import AdminSignup from './pages/admin/Signup';
 import Dashboard from './pages/admin/Dashboard';
 import IncidentDetails from './pages/IncidentDetails';
 import {useContext} from 'react';
-import UserContext from './contexts/rename/AuthContext';
+import UserContext from './contexts/AuthContext';
+import MyTasks from './pages/MyTasks';
 
 function App() {
 	const {user} = useContext(UserContext);
@@ -51,7 +52,7 @@ function App() {
 						path='/admin/my-tasks'
 						element={
 							<ProtectedRoute>
-								<Incidents />
+								<MyTasks />
 							</ProtectedRoute>
 						}
 					/>

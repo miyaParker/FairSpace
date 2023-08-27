@@ -20,10 +20,10 @@ const Incidents = () => {
 						<p className='w-1/5 text-gray'>Dami Ayenusi</p>
 						<p className='w-1/5 text-gray'>Resolved</p>
 						<p className='w-1/5 text-gray flex gap-x-2'>
-							<img src='/star.svg' height={24} width={24} />
-							<img src='/star.svg' height={24} width={24} />
-							<img src='/star.svg' height={24} width={24} />
-							<img src='/star.svg' height={24} width={24} />
+							<img src='/star-green.svg' height={24} width={24} />
+							<img src='/star-green.svg' height={24} width={24} />
+							<img src='/star-green.svg' height={24} width={24} />
+							<img src='/star-green.svg' height={24} width={24} />
 							<img src='/star-gray.svg' height={24} width={24} />
 						</p>
 					</div>

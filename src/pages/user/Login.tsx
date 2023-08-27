@@ -1,7 +1,7 @@
-import {signIn} from '../../services/auth';
+import {signIn} from '../../services/firebase/auth';
 import {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import UserContext from '../../contexts/rename/AuthContext';
+import UserContext from '../../contexts/AuthContext';
 
 const Login = () => {
 	const {user: authUser, login} = useContext(UserContext);

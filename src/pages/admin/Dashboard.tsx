@@ -12,8 +12,11 @@ import {
 	YAxis,
 	CartesianGrid,
 } from 'recharts';
-import {fetchIncidents, fetchAssignedCases} from '../../services/dashboard';
-import UserContext from '../../contexts/rename/AuthContext';
+import {
+	fetchIncidents,
+	fetchAssignedCases,
+} from '../../services/firebase/dashboard';
+import UserContext from '../../contexts/AuthContext';
 import DataSnapshot = firebase.database.DataSnapshot;
 
 const Incidents = () => {
@@ -42,7 +45,6 @@ const Incidents = () => {
 	const [rating, setRating] = useState(0);
 	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
-		console.log(data);
 		if (data) {
 			const incidentsArr = Object.values(data) as Incident[];
 			setIncidents(incidentsArr);
@@ -60,7 +62,7 @@ const Incidents = () => {
 			}, 0);
 			setPendingIncidents(pending);
 			setResolvedIncidents(resolved);
-			setRating(ratings / ratedIncidents.length);
+			if (ratings > 0) setRating(ratings / ratedIncidents.length);
 		}
 	};
 	const createDateString = (date) => {
@@ -71,7 +73,7 @@ const Incidents = () => {
 		return `${month} ${day}, ${year} `;
 	};
 	useEffect(() => {
-		if (user.isAdmin) {
+		if (user?.isAdmin) {
 			fetchAssignedCases(user.email, fetchCallback);
 		} else fetchIncidents(fetchCallback);
 	}, []);
@@ -149,7 +151,9 @@ const Incidents = () => {
 						</div>
 						<div className='drop-shadow-xl w-1/3 flex-shrink-0 py-[40px] bg-[#8FB8ED] bg-opacity-30 rounded-[20px]'>
 							<p className='text-center text-[42px] leading-[120%] font-bold'>
-								{resolvedIncidents.length}
+								{resolvedIncidents.length
+									? resolvedIncidents.length
+									: 'No data'}
 							</p>
 							<p className='text-center text-[20px] font-semibold'>
 								Resolved Incidents
@@ -157,7 +161,7 @@ const Incidents = () => {
 						</div>
 						<div className='drop-shadow-xl w-1/3 flex-shrink-0 py-[40px] bg-[#87DDE8] bg-opacity-40 rounded-[20px]'>
 							<p className='text-center text-[42px] leading-[120%] font-bold'>
-								{rating}
+								{rating ? rating : 'No data'}
 							</p>
 							<p className='text-center text-[20px] font-semibold'>
 								Response Rating
