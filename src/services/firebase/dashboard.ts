@@ -12,7 +12,7 @@ import {
 	get,
 	getDatabase,
 } from 'firebase/database';
-import {Incident} from '../components/IncidentReportForm';
+import {Incident} from '../../components/IncidentReportForm';
 
 export const createIncident = (data: Incident) => {
 	const db = initDB();

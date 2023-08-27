@@ -465,31 +465,36 @@ const Incidents = () => {
 										</div>
 									</div>
 								)}
-							{incident.status === 'Resolved' && incident.rating > 0 && (
-								<div className='mb-[20px]'>
-									<p className='text-[24px] font-semibold mb-[10px] '>
-										Feedback Rating
-									</p>
-									<div className='flex gap-x-2'>
+							{incident?.rating &&
+								incident.status === 'Resolved' &&
+								incident.rating > 0 && (
+									<div className='mb-[20px]'>
+										<p className='text-[24px] font-semibold mb-[10px] '>
+											Feedback Rating
+										</p>
 										<div className='flex gap-x-2'>
-											{Array.from(Array(incident.rating).keys()).map(() => (
-												<img
-													src={
-														incident.rating > 3
-															? '/star-green.svg'
-															: '/star-orange.svg'
-													}
-													width={24}
-													height={24}
-												/>
-											))}
-											{Array.from(Array(5 - incident.rating).keys()).map(() => (
-												<img src='/star-gray.svg' width={24} height={24} />
-											))}
+											<div className='flex gap-x-2'>
+												{incident?.rating &&
+													Array.from(Array(incident?.rating).keys()).map(() => (
+														<img
+															src={
+																incident?.rating && incident?.rating > 3
+																	? '/star-green.svg'
+																	: '/star-orange.svg'
+															}
+															width={24}
+															height={24}
+														/>
+													))}
+												{Array.from(Array(5 - incident?.rating).keys()).map(
+													() => (
+														<img src='/star-gray.svg' width={24} height={24} />
+													)
+												)}
+											</div>
 										</div>
 									</div>
-								</div>
-							)}
+								)}
 							{incident.status === 'Resolved' &&
 								incident.rating === 0 &&
 								user.uid !== incident.reportedBy && (

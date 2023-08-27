@@ -2,7 +2,7 @@ import {initializeApp} from 'firebase/app';
 import {getMessaging, getToken, onMessage} from 'firebase/messaging';
 import firebaseConfig from './firebaseConfig';
 import initDB from './initDB';
-import {child, push, ref, set} from 'firebase/database';
+import {ref, set} from 'firebase/database';
 
 function requestPermission() {
 	console.log('Requesting permission...');
@@ -15,7 +15,6 @@ function requestPermission() {
 
 export function initNotif() {
 	const userObj = localStorage.getItem('user');
-	console.log(userObj);
 	if (userObj) {
 		const user = JSON.parse(userObj);
 		const db = initDB();
@@ -25,7 +24,6 @@ export function initNotif() {
 			vapidKey:
 				'BMc13IOwt0ESFf77wpO-yvjipd5sJfgFr0I--_RivEfMqwtyI17zNDu2gp-yZOQbNsM3SfkEWCCthegZpLU2Hvo',
 		}).then((token) => {
-			console.log('INIT TOKEN', token);
 			if (token) {
 				set(ref(db, 'token/' + user.uid), {token})
 					.then((data) => {

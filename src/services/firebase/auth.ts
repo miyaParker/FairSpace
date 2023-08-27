@@ -73,7 +73,12 @@ export function signInAdmin({
 					equalTo(user.uid)
 				);
 				onValue(adminRef, (snapshot) => {
-					const admin = Object.values(snapshot.val())[0];
+					const admin = Object.values(snapshot.val())[0] as {
+						isAdmin: boolean;
+						isSuperAdmin: boolean;
+						role: string;
+						uid: string;
+					};
 					localStorage.setItem(
 						'user',
 						JSON.stringify({

@@ -1,10 +1,9 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import NavBar from '../components/NavBar';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {fetchCourses} from '../services/udemy';
 
 const LearningHub = () => {
-	const [courses, setCourses] = useState<any>([]);
 	useEffect(() => {
 		fetchCourses().catch((err) => console.error(err));
 	}, []);
