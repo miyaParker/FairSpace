@@ -9,46 +9,33 @@ import NavBar from '../components/NavBar';
 import AuthContext from '../contexts/AuthContext';
 import {useParams} from 'react-router-dom';
 import {AnimatePresence, motion} from 'framer-motion';
-import {Incident} from '../components/IncidentReportForm';
+import {IIncident} from '../types';
 import firebase from 'firebase/compat/app';
 import DataSnapshot = firebase.database.DataSnapshot;
+import {createDateString} from '../helper';
 
 const Incidents = () => {
 	const {incidentId} = useParams();
 	const {user} = useContext(AuthContext);
-	const monthArray = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
 	const [rating, setRating] = useState(0);
 	const [showDropdown, setShowDropdown] = useState(false);
-	const [incident, setIncident] = useState({} as Incident);
+	const [incident, setIncident] = useState({} as IIncident);
 	const [response, setResponse] = useState('');
 	const [error, setError] = useState('');
 	const [formError, setFormError] = useState('');
 	const [admins, setAdmins] = useState<any>([]);
-	console.log(user);
+
 	const assignCase = (body) => {
 		if (body.investigator === 'Assign to Me') body['investigator'] = user.email;
 		updateIncident(incident.id, body, (snapshot: DataSnapshot) => {
 			console.log(snapshot.val());
 		});
 	};
+
 	const resolveCase = (body) => {
 		if (incident?.feedback && incident.feedback.length) {
 			updateIncident(incident.id, body, () => {
 				console.log('');
-				// getIncidentById(incidentId, fetchCallback);
 			});
 		} else {
 			setError('Include a feedback to resolve this case:');
@@ -84,19 +71,11 @@ const Incidents = () => {
 		const data = Object.values(snapshot.val());
 		setAdmins(data);
 	};
-	const createDateString = (date) => {
-		if (date) {
-			const stringArray = date?.split('/');
-			const day = stringArray[0];
-			const month = monthArray[parseInt(stringArray[1]) - 1];
-			const year = stringArray[2];
-			return `${month} ${day}, ${year} `;
-		}
-	};
 	useEffect(() => {
 		getIncidentById(incidentId, fetchCallback);
 		fetchAdmins(fetchAdminsCallback);
 	}, []);
+
 	useEffect(() => {
 		const body = {
 			rating,
@@ -425,7 +404,6 @@ const Incidents = () => {
 									</div>
 								</div>
 							) : null}
-							{console.log(incident.reportedBy)}
 							{incident.status !== 'Resolved' &&
 							(incident?.investigator === user.email ||
 								(user.uid === incident.reportedBy &&

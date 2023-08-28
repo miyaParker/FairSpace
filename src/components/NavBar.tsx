@@ -9,6 +9,7 @@ const NavBar = ({title}: {title: string}) => {
 	useEffect(() => {
 		login();
 	}, []);
+
 	useEffect(() => {
 		if (user) {
 			setEmail(user.email);
@@ -21,7 +22,7 @@ const NavBar = ({title}: {title: string}) => {
 
 			<div className='flex gap-[12px] items-center'>
 				<img src='/bell.svg' width={24} height={24} />
-				<div className='w-[1px] h-[30px] bg-gray bg-opacity-50'></div>
+				<div className='w-[1px] h-[30px] bg-gray/30'></div>
 				<div
 					className='flex gap-[2px] items-center w-max'
 					role='button'

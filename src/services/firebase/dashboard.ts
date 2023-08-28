@@ -12,7 +12,7 @@ import {
 	get,
 	getDatabase,
 } from 'firebase/database';
-import {Incident} from '../../components/IncidentReportForm';
+import {IFeedback} from '../../types';
 
 export const createIncident = (data: {
 	date: string;
@@ -25,7 +25,7 @@ export const createIncident = (data: {
 	rating?: number;
 	description: string;
 	reportedBy: string;
-	feedback?: Feedback[];
+	feedback?: IFeedback[];
 	createdAt: number;
 	investigator?: string;
 	contactInformation?: string;
@@ -49,7 +49,7 @@ export const createIncident = (data: {
 
 export const fetchIncidents = (onSuccess: (snapshot: any) => unknown) => {
 	const db = initDB();
-	const incidentsRef = ref(db, 'incidents/');
+	const incidentsRef = query(ref(db, 'incidents/'), orderByChild('status'));
 	onValue(incidentsRef, onSuccess);
 };
 export const fetchAssignedCases = (

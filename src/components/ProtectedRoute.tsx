@@ -9,14 +9,12 @@ const ProtectedRoute = ({children}: {children: ReactNode}) => {
 	useEffect(() => {
 		login();
 	}, []);
+
 	useEffect(() => {
-		// setTimeout(() => {
-		// 	const user = localStorage.getItem('user');
 		if (!user) {
 			console.log(user);
 			navigate('/auth/login');
 		}
-		// }, 3000);
 	}, []);
 
 	return children;

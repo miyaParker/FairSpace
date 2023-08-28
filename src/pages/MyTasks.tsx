@@ -4,45 +4,25 @@ import IncidentReportForm from '../components/IncidentReportForm';
 import {fetchAssignedCases} from '../services/firebase/dashboard';
 import NavBar from '../components/NavBar';
 import AuthContext from '../contexts/AuthContext';
-import {Incident} from '../components/IncidentReportForm';
 import firebase from 'firebase/compat/app';
+import {IIncident} from '../types';
 import DataSnapshot = firebase.database.DataSnapshot;
 import {Link} from 'react-router-dom';
+import {createDateString} from '../helper';
+
 const MyTasks = () => {
 	const {user} = useContext(AuthContext);
-	const monthArray = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
-
 	const [showForm, setShowForm] = useState(false);
-	const [incidents, setIncidents] = useState<Incident[]>([] as Incident[]);
+	const [incidents, setIncidents] = useState<IIncident[]>([] as IIncident[]);
 	const handleClick = () => {
 		setShowForm(true);
 	};
 	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
 		if (data) {
-			const incidentsArr = Object.values(data) as Incident[];
+			const incidentsArr = Object.values(data) as IIncident[];
 			setIncidents(incidentsArr);
 		}
-	};
-	const createDateString = (date) => {
-		const stringArray = date?.split('/');
-		const day = stringArray[0];
-		const month = monthArray[parseInt(stringArray[1]) - 1];
-		const year = stringArray[2];
-		return `${month} ${day}, ${year} `;
 	};
 	useEffect(() => {
 		fetchAssignedCases(user.email, fetchCallback);
@@ -73,7 +53,7 @@ const MyTasks = () => {
 							<p className='w-1/5 text-gray'>Severity</p>
 							<p className='w-1/5 text-gray'>Status</p>
 						</div>
-						{incidents.map((incident: Incident) => (
+						{incidents.map((incident) => (
 							<Link
 								key={incident?.id}
 								to={

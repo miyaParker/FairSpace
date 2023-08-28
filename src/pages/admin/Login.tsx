@@ -21,6 +21,7 @@ const AdminLogin = () => {
 		e.preventDefault();
 		if (user.email && user.password) {
 			signInAdmin(user).then((res) => {
+				console.log(user);
 				if (res && res?.user) {
 					login();
 					setTimeout(() => {

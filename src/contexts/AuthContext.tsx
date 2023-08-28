@@ -1,10 +1,5 @@
 import {createContext} from 'react';
 
-interface userContext {
-	user: any;
-	login: () => void;
-	logout: () => void;
-}
-
-const UserContext = createContext({} as userContext);
+import {IUserContext} from '../types';
+const UserContext = createContext({} as IUserContext);
 export default UserContext;

@@ -4,50 +4,31 @@ import IncidentReportForm from '../components/IncidentReportForm';
 import {fetchIncidents} from '../services/firebase/dashboard';
 import NavBar from '../components/NavBar';
 import AuthContext from '../contexts/AuthContext';
-import {Incident} from '../components/IncidentReportForm';
 import firebase from 'firebase/compat/app';
 import DataSnapshot = firebase.database.DataSnapshot;
 import {Link} from 'react-router-dom';
+import {IIncident} from '../types';
+import {createDateString} from '../helper';
 
 const Incidents = () => {
 	const {user, login} = useContext(AuthContext);
-	const monthArray = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
-
 	const [showForm, setShowForm] = useState(false);
-	const [incidents, setIncidents] = useState<Incident[]>([] as Incident[]);
+	const [incidents, setIncidents] = useState<IIncident[]>([] as IIncident[]);
 	const handleClick = () => {
 		setShowForm(true);
 	};
 	const fetchCallback = (snapshot: DataSnapshot) => {
 		const data = snapshot.val();
 		if (data) {
-			const incidentsArr = Object.values(data) as Incident[];
+			const incidentsArr = Object.values(data) as IIncident[];
 			setIncidents(incidentsArr);
 		}
 	};
-	const createDateString = (date) => {
-		const stringArray = date?.split('/');
-		const day = stringArray[0];
-		const month = monthArray[parseInt(stringArray[1]) - 1];
-		const year = stringArray[2];
-		return `${month} ${day}, ${year} `;
-	};
+
 	useEffect(() => {
 		login();
 	}, []);
+
 	useEffect(() => {
 		fetchIncidents(fetchCallback);
 	}, []);
@@ -58,10 +39,14 @@ const Incidents = () => {
 				<div className='h-full w-full pr-[40px] flex flex-col'>
 					<NavBar title='Incidents' />
 					<div className='pt-[20px] flex justify-end pb-[30px]'>
-						{console.log(user?.isAdmin || user?.isSuperAdmin)}
 						{!(user && (user?.isAdmin || user?.isSuperAdmin)) && (
 							<div className='cursor-pointer rounded-[40px] bg-black flex gap-x-[10px] px-[20px] py-[15px]'>
-								<img src='/plus.svg' width={16} height={16} />
+								<img
+									src='/plus.svg'
+									width={16}
+									height={16}
+									alt='report incident'
+								/>
 								<button
 									onClick={handleClick}
 									className='text-white font-semibold text-[16px]'>
@@ -78,7 +63,7 @@ const Incidents = () => {
 							<p className='w-1/5 text-gray'>Severity</p>
 							<p className='w-1/5 text-gray'>Status</p>
 						</div>
-						{incidents.map((incident: Incident) => (
+						{incidents.map((incident) => (
 							<Link
 								key={incident?.id}
 								to={

@@ -1,61 +1,14 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {motion} from 'framer-motion';
 import {createIncident} from '../services/firebase/dashboard';
+import {IIncident} from '../types';
 import Loader from './Loader';
 import firebase from 'firebase/compat/app';
 import User = firebase.User;
-
-export interface Feedback {
-	date: string;
-	response: string;
-	from: string;
-}
-
-export interface Incident {
-	createdAt: string;
-	reportedBy: string;
-	date: string;
-	time: string;
-	location: string;
-	incidentType: 'Discrimination' | 'Harassment' | 'Bias' | string;
-	status: 'Pending' | 'Under Review' | 'Resolved' | string;
-	severity: string;
-	description: string;
-	partiesInvolved: string;
-	witnesses: string;
-	evidence: string;
-	id?: string;
-	investigator?: string;
-	feedback?: Feedback[];
-	emotionalImpact?: string;
-	rating?: number;
-	desiredOutcome?: string;
-	confidentiality: string;
-	contactInformation?: string;
-	comments?: string;
-}
+import {requiredFields} from '../constants';
 
 const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
-	const [user, setUser] = useState({} as User);
-	useEffect(() => {
-		const userObject = localStorage.getItem('user');
-		if (userObject) setUser(JSON.parse(userObject));
-	}, []);
-	const requiredFields = {
-		1: 'date',
-		3: 'location',
-		4: 'description',
-		5: 'partiesInvolved',
-		6: 'incidentType',
-		7: 'witnesses',
-		8: 'severity',
-		11: 'confidentiality',
-	};
-
-	const [loading, setLoading] = useState(false);
-	const [index, setIndex] = useState(1);
-	const [prevIndex, setPrevIndex] = useState(1);
-	const [formData, setFormData] = useState<Incident>({
+	const initialData = {
 		date: '',
 		time: '',
 		location: '',
@@ -75,7 +28,20 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 		rating: 0,
 		feedback: [],
 		createdAt: '',
-	});
+	};
+	const [user, setUser] = useState({} as User);
+	const [loading, setLoading] = useState(false);
+	const [index, setIndex] = useState(1);
+	const [prevIndex, setPrevIndex] = useState(1);
+	const [formData, setFormData] = useState<IIncident>(initialData);
+
+	const dateRef = useRef<HTMLInputElement | null>(null);
+	const timeRef = useRef<HTMLInputElement | null>(null);
+
+	useEffect(() => {
+		const userObject = localStorage.getItem('user');
+		if (userObject) setUser(JSON.parse(userObject));
+	}, []);
 	const [error, setError] = useState({key: 0, value: ''});
 	const goNext = () => {
 		setIndex(index + 1);
@@ -91,7 +57,6 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 			reportedBy: user.uid,
 			createdAt: new Date().getTime(),
 		};
-		console.log(data);
 		setLoading(true);
 		createIncident(data);
 		setTimeout(() => {
@@ -125,6 +90,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 										1. When did the incident occur?*
 									</label>
 									<input
+										ref={dateRef}
 										value={formData.date}
 										onChange={(e) =>
 											setFormData({
@@ -132,9 +98,11 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 												date: e.target.value,
 											})
 										}
+										type='date'
 										placeholder='mm/dd/yyyy'
 										required={true}
-										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
+										onClick={() => dateRef.current?.showPicker()}
+										className='cursor-pointer w-full p-8 bg-black text-[22px] mt-4 block border-b border-b-1 border-white'
 									/>
 									{error.key == 1 ? (
 										<p className='py-[20px] text-red-500'>{error.value}</p>
@@ -159,6 +127,8 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 										</span>
 									</label>
 									<input
+										ref={timeRef}
+										type='time'
 										value={formData.time}
 										onChange={(e) =>
 											setFormData({
@@ -166,8 +136,9 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 												time: e.target.value,
 											})
 										}
+										onClick={() => timeRef.current?.showPicker()}
 										placeholder='hh:mm'
-										className='w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
+										className='cursor-pointer w-full p-8 bg-transparent text-[22px] mt-4 text-white block border-b border-b-1 border-white'
 									/>
 								</motion.div>
 							) : null}
@@ -548,7 +519,12 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									}}
 									className='border border-2 py-[20px] px-[40px] rounded-[40px] absolute bottom-[120px] right-[20px] flex gap-[10px]'>
 									<span className='text-[24px]'>Next</span>
-									<img src='/arrow-right.svg' width={32} height={32} />
+									<img
+										src='/arrow-right.svg'
+										width={32}
+										height={32}
+										alt='previous'
+									/>
 								</button>
 							) : null}
 							{index === 1 ? null : (
@@ -566,6 +542,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 										src='/arrow-right.svg'
 										width={32}
 										height={32}
+										alt='next'
 									/>
 									<span className='text-[24px]'>Prev</span>
 								</button>

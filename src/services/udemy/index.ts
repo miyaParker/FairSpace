@@ -6,7 +6,7 @@ const SECRET = import.meta.env.VITE_UDEMY_SECRET;
 
 export const fetchCourses = async () => {
 	const data = await axios.get(
-		`${BASE_URL}/courses/?course_category=Business&course_subcategory=Human Resources`,
+		`${BASE_URL}/courses/?sub_category=Other Office Productivity`,
 		{
 			headers: {
 				Authorization: `Basic ${btoa(`${ID}:${SECRET}`)}`,
