@@ -28,11 +28,6 @@ export const userLinks = [
 		name: 'Upcoming Events',
 		icon: '/resources.svg',
 	},
-	// {
-	// 	to: '/app/resources',
-	// 	name: 'Resources',
-	// 	icon: '/resources.svg',
-	// },
 ];
 export const adminLinks = [
 	{
@@ -51,8 +46,8 @@ export const adminLinks = [
 		icon: '/learning.svg',
 	},
 	{
-		to: '/admin/resources',
-		name: 'Resources',
+		to: '/admin/events',
+		name: 'Events',
 		icon: '/resources.svg',
 	},
 ];
@@ -78,8 +73,8 @@ export const superAdminLinks = [
 		icon: '/learning.svg',
 	},
 	{
-		to: '/admin/resources',
-		name: 'Resources',
+		to: '/admin/events',
+		name: 'Events',
 		icon: '/resources.svg',
 	},
 ];
@@ -173,4 +168,12 @@ export const icons = [
 	'bg-[url("/puzzle.svg")]',
 	'bg-[url("/key.svg")]',
 	'bg-[url("/dove.svg")]',
+];
+
+export const colors = [
+	'bg-[#967CDF]/20',
+	'bg-[#8EB8E5]/30',
+	'bg-[#4ECDC4]/20',
+	'bg-[#81C3D7]/30',
+	'bg-[#CE50BB]/20',
 ];

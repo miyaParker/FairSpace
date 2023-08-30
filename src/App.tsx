@@ -14,6 +14,7 @@ import IncidentDetails from './pages/IncidentDetails';
 import {useContext} from 'react';
 import UserContext from './contexts/AuthContext';
 import MyTasks from './pages/MyTasks';
+import Events from './pages/Events';
 
 function App() {
 	const {user} = useContext(UserContext);
@@ -89,10 +90,18 @@ function App() {
 						}
 					/>
 					<Route
-						path='/app/feedback'
+						path='/app/events'
 						element={
 							<ProtectedRoute>
-								<Feedback />
+								<Events />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path='/admin/events'
+						element={
+							<ProtectedRoute>
+								<Events />
 							</ProtectedRoute>
 						}
 					/>

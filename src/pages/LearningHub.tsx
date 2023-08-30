@@ -31,7 +31,7 @@ const LearningHub = () => {
 													height={64}
 												/>
 											</div>
-											<div className='w-full h-full absolute bg-black/40 bottom-0 left-0 rounded-[18px]'></div>
+											<div className='w-full h-full absolute bg-black/20 bottom-0 left-0 rounded-[18px]'></div>
 										</div>
 									</a>
 							  ))
