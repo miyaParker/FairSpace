@@ -37,7 +37,7 @@ const Login = () => {
 			<form
 				className='w-full mx-auto sm:w-4/5 lg:w-1/2 lg:mx-0 h-full bg-red px-[20px] md:px-[40px] lg:px-[60px] xl:px-[80px]'
 				onSubmit={handleSubmit}>
-				<h1 className='mt-[80px] lg:mt-[60px] xl:mt-[150px] text-[32px] sm:text-[36px] md:text-[40px] lg:text-[48px] text-white text-center lg:text-left'>
+				<h1 className='mt-[80px] lg:mt-[60px] xl:mt-[100px] text-[32px] sm:text-[36px] md:text-[40px] lg:text-[48px] text-white text-center lg:text-left'>
 					Welcome to FairSpace
 				</h1>
 				<p className='text-[18px] text-white text-center lg:text-left'>
@@ -76,7 +76,7 @@ const Login = () => {
 			</form>
 			<div className='hidden lg:block relative w-1/2 rounded-[18px] overflow-hidden form-image'>
 				<img src='/login-cover.jpg' className='cover rounded-[18px]' />
-				<p className='bg-white bg-opacity-10 p-[20px] rounded-[9px] leading-[120%] max-w-[600px] absolute bottom-[40px] left-[40px] z-40 text-white text-[30px] lg:text-[40px] xl:text-[60px]'>
+				<p className='bg-white bg-opacity-10 p-[20px] rounded-[9px] leading-[120%] max-w-[600px] absolute top-[] left-[40px] z-40 text-white text-[30px] lg:text-[40px] xl:text-[60px]'>
 					Join us in fostering respectful workplaces where every voice matters.
 				</p>
 				<div className='absolute w-full h-full bottom-0 z-20 bg-black bg-opacity-40'></div>
