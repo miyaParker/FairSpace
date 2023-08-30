@@ -7,7 +7,7 @@ const Sidebar = () => {
 	const {user} = useContext(AuthContext);
 
 	return (
-		<div className='flex-shrink-0 hidden lg:flex w-[320px] mr-[60px] h-full sidebar text-white bg-black flex-col gap-[48px] py-[30px] px-[42px]'>
+		<div className='flex-shrink-0 hidden lg:flex w-[320px] h-full sidebar text-white bg-black flex-col gap-[48px] py-[30px] px-[42px]'>
 			<Link to='/'>
 				<div className='mb-[60px] flex gap-x-[16px]'>
 					<p className='text-[28px] font-medium'>FairSpace</p>

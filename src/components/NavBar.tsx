@@ -17,7 +17,7 @@ const NavBar = ({title}: {title: string}) => {
 	}, []);
 
 	return (
-		<nav className='self-end w-full border-b border-gray border-opacity-20 flex justify-between mb-[40px] py-[30px] relative '>
+		<nav className='self-end w-full border-b border-gray border-opacity-20 flex justify-between py-[30px] relative '>
 			<h1 className='font-semibold text-[32px]'>{title}</h1>
 
 			<div className='flex gap-[12px] items-center'>
@@ -43,7 +43,7 @@ const NavBar = ({title}: {title: string}) => {
 						initial={{opacity: 0, y: 10}}
 						whileInView={{opacity: 1, y: 0}}
 						exit={{opacity: 0, y: 20}}
-						className='bg-white rounded-[14px] absolute top-[80px] right-[0px] w-[200px] p-[20px]'>
+						className='bg-white rounded-[14px] absolute top-[80px] right-[0px] w-[200px] p-[20px] z-50'>
 						<p onClick={logout} role='button' className='flex gap-[4px]'>
 							Logout
 						</p>
