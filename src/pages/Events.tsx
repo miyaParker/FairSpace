@@ -12,6 +12,7 @@ const Events = () => {
 			description:
 				'Policies that promote gender equity can help level the playing field for men and women and provide equal opportunities and equal outcomes for both gender.',
 			location: 'Online',
+			link: 'https://meet.google.com/nad-ayux-ern',
 			resources: [],
 		},
 		{
@@ -23,6 +24,7 @@ const Events = () => {
 				'Policies that promote gender equity can help level the playing field for men and women and provide equal opportunities and equal outcomes for both gender.',
 			location: 'Online',
 			resources: [],
+			link: 'https://meet.google.com/nad-ayux-ern',
 		},
 	];
 	return (
@@ -43,15 +45,15 @@ const Events = () => {
 											<p className='max-w-[480px] text-black/70 mb-6 text-[18px] leading-[120%] xl:text-[18px] '>
 												{event.description}
 											</p>
-											<p className='flex gap-x-[5px] mb-2 items-center'>
+											<p className='flex gap-x-[5px] mb-3 items-center'>
 												<div className='rounded-full w-[32px] h-[32px] border border-black/70 flex justify-center items-center'>
 													<img src='/calendar.svg' width={14} height={14} />
 												</div>
-												<p className='max-w-[480px] text-black/70 my-4 text-[18px] leading-[120%] xl:text-[18px] '>
+												<p className='max-w-[480px] text-black/70 text-[18px] leading-[120%] xl:text-[18px] '>
 													{event.date}
 												</p>
 											</p>
-											<div className='flex gap-x-[5px] mb-2 items-center'>
+											<div className='flex gap-x-[5px] mb-3 items-center'>
 												<div className='rounded-full w-[32px] h-[32px] border border-black/70 flex justify-center items-center'>
 													<img src='/clock.svg' width={20} height={20} />
 												</div>
@@ -65,14 +67,25 @@ const Events = () => {
 													</span>
 												</div>
 											</div>
-											<div className='flex gap-x-[5px] mb-2 items-center'>
+											<div className='flex gap-x-[5px] mb-3 items-center'>
 												<div className='rounded-full w-[32px] h-[32px] border border-black/70 flex justify-center items-center'>
 													<img src='/location.svg' width={20} height={20} />
 												</div>
-												<p className='max-w-[480px] text-black/70 my-4 text-[18px] leading-[120%] xl:text-[18px] '>
+												<p className='max-w-[480px] text-black/70 text-[18px] leading-[120%] xl:text-[18px] '>
 													{event.location}
 												</p>
 											</div>
+											{event.location === 'Online' ? (
+												<a href={event.link} target='_blank'>
+													<button
+														className={`w-full p-[20px] rounded-[10px] ${colors[
+															index
+														].slice(0, -3)} bg-opacity-80`}>
+														Join Event
+													</button>
+												</a>
+											) : // </div>
+											null}
 										</div>
 									</div>
 							  ))

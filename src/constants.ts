@@ -172,8 +172,8 @@ export const icons = [
 
 export const colors = [
 	'bg-[#967CDF]/20',
-	'bg-[#8EB8E5]/30',
+	'bg-[#8EB8E5]/20',
 	'bg-[#4ECDC4]/20',
-	'bg-[#81C3D7]/30',
+	'bg-[#81C3D7]/20',
 	'bg-[#CE50BB]/20',
 ];
