@@ -11,8 +11,8 @@ const ProtectedRoute = ({children}: {children: ReactNode}) => {
 	}, []);
 
 	useEffect(() => {
+		console.log(user);
 		if (!user) {
-			console.log(user);
 			navigate('/auth/login');
 		}
 	}, []);

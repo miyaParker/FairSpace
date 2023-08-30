@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100;9..40,400;9..40,500;9..40,700&display=swap');
-
+body{
+    background-color: black;
+}
 .sidebar {
     height: calc(100vh - 80px);
 }
@@ -41,4 +43,21 @@
 .rate > input:checked ~ label:hover ~ label,
 .rate > label:hover ~ input:checked ~ label {
     color: black;
+}
+.arrow {
+    transition: right 350ms; }
+
+.featured:hover .arrow{
+    right: 110px;
+    transition: right 200ms ease-out;
+}
+
+.list-block-2:hover .view-2{
+    opacity: 1;
+}
+.list-block-3:hover .view-3{
+    opacity: 1;
+}
+.form-image{
+    height: calc(100vh - 40px);
 }

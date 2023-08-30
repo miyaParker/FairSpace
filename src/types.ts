@@ -22,7 +22,7 @@ export interface IIncident {
 	description: string;
 	partiesInvolved: string;
 	witnesses: string;
-	evidence: string;
+	evidence?: string[];
 	id?: string;
 	investigator?: string;
 	feedback?: IFeedback[];

@@ -18,7 +18,7 @@ export const createIncident = (data: {
 	date: string;
 	severity: string;
 	comments?: string;
-	evidence: string;
+	evidence?: string[];
 	desiredOutcome?: string;
 	confidentiality: string;
 	incidentType: 'Discrimination' | 'Harassment' | 'Bias' | string;

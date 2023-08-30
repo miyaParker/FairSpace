@@ -81,14 +81,6 @@ function App() {
 						}
 					/>
 					<Route
-						path='/admin/feedback'
-						element={
-							<ProtectedRoute>
-								<Feedback />
-							</ProtectedRoute>
-						}
-					/>
-					<Route
 						path='/admin/learning-hub'
 						element={
 							<ProtectedRoute>

@@ -94,7 +94,7 @@ const Incidents = () => {
 							.toUpperCase()}`}
 					/>
 					{Object.keys(incident).length ? (
-						<div className=' overflow-y-scroll w-full text-[17px] mb-[90px]'>
+						<div className='overflow-y-scroll w-full text-[17px] mb-[90px]'>
 							<div className='flex justify-between items-start'>
 								<div className='flex my-[40px] gap-[20px]'>
 									<div className='flex flex-col gap-[5px]'>

@@ -1,12 +1,12 @@
 const firebaseConfig = {
-	apiKey: 'AIzaSyDv-CWf4QEZphbI3YGqxgMLcFUNOLwy1DE',
-	authDomain: 'fairspace-b3687.firebaseapp.com',
-	databaseURL: 'https://fairspace-b3687-default-rtdb.firebaseio.com',
-	projectId: 'fairspace-b3687',
-	storageBucket: 'fairspace-b3687.appspot.com',
-	messagingSenderId: '521083593961',
-	appId: '1:521083593961:web:2ecf77a0ead7620004bc78',
-	measurementId: 'G-QF77DNGJM2',
+	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+	authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+	databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+	projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_FIREBASE_APP_ID,
+	measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 export default firebaseConfig;

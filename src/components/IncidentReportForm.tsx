@@ -19,7 +19,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 		description: '',
 		partiesInvolved: '',
 		witnesses: '',
-		evidence: '',
+		evidence: [],
 		emotionalImpact: '',
 		desiredOutcome: '',
 		confidentiality: '',

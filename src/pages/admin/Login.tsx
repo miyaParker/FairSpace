@@ -12,6 +12,7 @@ const AdminLogin = () => {
 	});
 	const navigate = useNavigate();
 	useEffect(() => {
+		console.log(authUser);
 		if (authUser && (authUser?.isAdmin || authUser?.isSuperAdmin)) {
 			navigate('/admin/dashboard');
 		}
