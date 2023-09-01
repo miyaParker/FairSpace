@@ -2,7 +2,7 @@
 
 FairSpace is an empowering app designed to promote workplace equity, inclusivity, and respect. It provides a platform for anonymous incident reporting and offers educational resources to foster positive change in workplaces.
 
-![FairSpace App Screenshot](app-screenshot.png)
+![FairSpace App Screenshot](public/app-screenshot.png)
 
 ## Features
 
@@ -16,8 +16,8 @@ FairSpace is an empowering app designed to promote workplace equity, inclusivity
 - React.js
 - Vite
 - TypeScript
-- CSS (or CSS-in-JS library of your choice)
-- [Other technologies you're using]
+- Tailwind css
+- Firebase
 
 ## Getting Started
 
@@ -55,8 +55,3 @@ This project is licensed under the MIT License.
 
 Acknowledgements
 Me, myself and I
-
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list

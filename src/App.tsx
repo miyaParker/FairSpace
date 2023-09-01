@@ -3,7 +3,6 @@ import {Routes, Route, BrowserRouter} from 'react-router-dom';
 import Login from './pages/user/Login';
 import Incidents from './pages/Incidents';
 import ProtectedRoute from './components/ProtectedRoute';
-import Feedback from './pages/user/Feedback';
 import LearningHub from './pages/LearningHub';
 import Signup from './pages/user/Signup';
 import AuthProvider from './contexts/AuthProvider';
@@ -19,8 +18,8 @@ import Events from './pages/Events';
 function App() {
 	const {user} = useContext(UserContext);
 	return (
-		<BrowserRouter>
-			<AuthProvider>
+		<AuthProvider>
+			<BrowserRouter>
 				<Routes>
 					<Route
 						path=''
@@ -114,8 +113,8 @@ function App() {
 						}
 					/>
 				</Routes>
-			</AuthProvider>
-		</BrowserRouter>
+			</BrowserRouter>
+		</AuthProvider>
 	);
 }
 

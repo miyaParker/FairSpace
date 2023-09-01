@@ -1,13 +1,20 @@
 export interface IUserContext {
 	user: any;
-	login: () => void;
-	logout: () => void;
+	login: (cb?: (user) => void) => void;
+	logout: (cb?: () => void) => void;
 }
 
 export interface IFeedback {
 	date: string;
 	response: string;
 	from: string;
+}
+
+export interface IFile {
+	name: string;
+	type: string;
+	size: string;
+	url: string;
 }
 
 export interface IIncident {
@@ -22,7 +29,7 @@ export interface IIncident {
 	description: string;
 	partiesInvolved: string;
 	witnesses: string;
-	evidence?: string[];
+	evidence?: IFile[];
 	id?: string;
 	investigator?: string;
 	feedback?: IFeedback[];

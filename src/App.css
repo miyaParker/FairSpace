@@ -59,3 +59,7 @@
 .form-image{
     height: calc(100vh - 40px);
 }
+
+.event-calendar{
+    width: calc(100% - 40px);
+}

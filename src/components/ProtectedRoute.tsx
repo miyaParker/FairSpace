@@ -1,22 +1,12 @@
-import {useNavigate} from 'react-router-dom';
-import {ReactNode, useContext, useEffect} from 'react';
-import UserContext from '../contexts/AuthContext';
+import {Navigate} from 'react-router-dom';
+import {ReactNode} from 'react';
 
 const ProtectedRoute = ({children}: {children: ReactNode}) => {
-	const {user, login} = useContext(UserContext);
+	const user = localStorage.getItem('user');
 
-	const navigate = useNavigate();
-	useEffect(() => {
-		login();
-	}, []);
-
-	useEffect(() => {
-		console.log(user);
-		if (!user) {
-			navigate('/auth/login');
-		}
-	}, []);
-
+	if (!user) {
+		return <Navigate to='/auth/login' replace />;
+	}
 	return children;
 };
 export default ProtectedRoute;

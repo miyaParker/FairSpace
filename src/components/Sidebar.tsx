@@ -4,18 +4,20 @@ import {Link} from 'react-router-dom';
 import {superAdminLinks, adminLinks, userLinks} from '../constants';
 
 const Sidebar = () => {
-	const {user} = useContext(AuthContext);
+	const {user: authUser} = useContext(AuthContext);
+	const user = JSON.parse(authUser);
+	console.log('user from sidebar', user);
 
 	return (
-		<div className='flex-shrink-0 hidden lg:flex w-[320px] mr-[60px] h-full sidebar text-white bg-black flex-col gap-[48px] py-[30px] px-[42px]'>
-			<Link to='/'>
+		<div className='flex-shrink-0 hidden lg:flex w-[320px] h-full sidebar text-white bg-black flex-col gap-[48px] py-[30px] px-[42px]'>
+			<Link to='/' replace={true}>
 				<div className='mb-[60px] flex gap-x-[16px]'>
 					<p className='text-[28px] font-medium'>FairSpace</p>
 				</div>
 			</Link>
 			{user && user?.isAdmin
 				? adminLinks.map((link, index) => (
-						<Link key={index} to={link.to}>
+						<Link key={index} to={link.to} replace={true}>
 							<div className='flex gap-x-[16px]'>
 								<img src={link.icon} width={24} height={24} />
 								<p className='text-[22px]'>{link.name}</p>
@@ -24,7 +26,7 @@ const Sidebar = () => {
 				  ))
 				: user && user?.isSuperAdmin
 				? superAdminLinks.map((link, index) => (
-						<Link key={index} to={link.to}>
+						<Link key={index} to={link.to} replace={true}>
 							<div className='flex gap-x-[16px]'>
 								<img src={link.icon} width={24} height={24} />
 								<p className='text-[22px]'>{link.name}</p>
@@ -32,7 +34,7 @@ const Sidebar = () => {
 						</Link>
 				  ))
 				: userLinks.map((link, index) => (
-						<Link key={index} to={link.to}>
+						<Link key={index} to={link.to} replace={true}>
 							<div className='flex gap-x-[16px]'>
 								<img src={link.icon} width={24} height={24} />
 								<p className='text-[22px]'>{link.name}</p>

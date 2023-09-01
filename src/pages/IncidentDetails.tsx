@@ -16,7 +16,8 @@ import {createDateString} from '../helper';
 
 const Incidents = () => {
 	const {incidentId} = useParams();
-	const {user} = useContext(AuthContext);
+	const {user: authUser} = useContext(AuthContext);
+	const user = JSON.parse(authUser);
 	const [rating, setRating] = useState(0);
 	const [showDropdown, setShowDropdown] = useState(false);
 	const [incident, setIncident] = useState({} as IIncident);
@@ -49,8 +50,8 @@ const Incidents = () => {
 			from:
 				user?.isAdmin || user?.isSuperAdmin
 					? user.email
-					: user?.contactInformation
-					? user?.contactInformation
+					: incident?.contactInformation
+					? incident?.contactInformation
 					: 'anonymous@fairspace.com',
 		};
 		const prevFeedback = incident?.feedback ? incident.feedback : [];
@@ -94,7 +95,7 @@ const Incidents = () => {
 							.toUpperCase()}`}
 					/>
 					{Object.keys(incident).length ? (
-						<div className='overflow-y-scroll w-full text-[17px] mb-[90px]'>
+						<div className='overflow-y-scroll pt-[30px] w-full text-[17px] mb-[90px]'>
 							<div className='flex justify-between items-start'>
 								<div className='flex my-[40px] gap-[20px]'>
 									<div className='flex flex-col gap-[5px]'>
@@ -141,7 +142,6 @@ const Incidents = () => {
 								</div>
 								{user?.isAdmin || user?.isSuperAdmin ? (
 									<>
-										{console.log(incident.status, user?.isSuperAdmin)}
 										{incident.status === 'Pending' && user?.isSuperAdmin && (
 											<div
 												onClick={() => setShowDropdown(!showDropdown)}
@@ -292,6 +292,16 @@ const Incidents = () => {
 									</>
 								) : null}
 							</div>
+							{incident?.contactInformation && (
+								<div className='mb-[40px]'>
+									<p className='text-[24px] font-semibold mb-[10px]'>
+										Contact Information
+									</p>
+									<p className='text-[20px] max-w-[800px]'>
+										{incident.contactInformation}
+									</p>
+								</div>
+							)}
 							{incident?.location && (
 								<div className='mb-[40px]'>
 									<p className='text-[24px] font-semibold mb-[10px]'>
@@ -362,6 +372,27 @@ const Incidents = () => {
 									<p className='text-[20px] max-w-[800px]'>
 										{incident.comments}
 									</p>
+								</div>
+							)}
+							{incident?.evidence && (
+								<div className='mb-[40px]'>
+									<p className='text-[24px] font-semibold mb-[10px]'>
+										Attachments
+									</p>
+									<div className='flex flex-wrap gap-[20px] w-4/5'>
+										{incident?.evidence?.length
+											? incident?.evidence.map((file) => (
+													<a href={file.url} target='_blank'>
+														<div className='flex flex-wrap rounded-[9px] gap-[5px] border border-black/60 drop-shadow-2xl w-max p-3 bg-[#967CDF]/30'>
+															<img src={'/link.svg'} width={18} height={18} />
+															<p className='text-[17px] font-medium'>
+																{file.name}
+															</p>
+														</div>
+													</a>
+											  ))
+											: null}
+									</div>
 								</div>
 							)}
 							{incident.status !== 'Pending' &&

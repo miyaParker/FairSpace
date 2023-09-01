@@ -24,7 +24,7 @@ const Login = () => {
 				if (res && res?.user) {
 					login();
 					setTimeout(() => {
-						navigate('/app/incidents');
+						navigate('/app/incidents', {replace: true});
 					}, 3000);
 				} else {
 					if (res && res?.error) setError(res.error);

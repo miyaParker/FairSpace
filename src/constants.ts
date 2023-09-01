@@ -86,7 +86,7 @@ export const requiredFields = {
 	6: 'incidentType',
 	7: 'witnesses',
 	8: 'severity',
-	11: 'confidentiality',
+	12: 'confidentiality',
 };
 export const resources = {
 	articles: [
@@ -177,3 +177,18 @@ export const colors = [
 	'bg-[#81C3D7]/20',
 	'bg-[#CE50BB]/20',
 ];
+
+export const imageTypes = [
+	'image/png',
+	'image/jpg',
+	'image/jpeg',
+	'image/webp',
+	'image/heic',
+];
+export const documentTypes = [
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	'application/msword',
+	'application/pdf',
+	'text/plain',
+];
+export const videoTypes = ['video/mp4', 'video/webm', 'video/mpeg'];

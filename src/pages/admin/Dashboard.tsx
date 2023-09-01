@@ -19,7 +19,7 @@ interface IPie {
 }
 
 const Incidents = () => {
-	const {user, login} = useContext(UserContext);
+	const {user} = useContext(UserContext);
 	const [data, setData] = useState<IPie[]>([] as IPie[]);
 	const colors = ['#0B1D51', '#3498db', '#2ecc71'];
 	const [incidents, setIncidents] = useState<IIncident[]>([] as IIncident[]);
@@ -53,28 +53,21 @@ const Incidents = () => {
 		}
 	};
 	useEffect(() => {
-		login();
-	}, []);
-
-	useEffect(() => {
 		if (user?.isAdmin) {
-			fetchAssignedCases(user.email, fetchCallback);
+			fetchAssignedCases(user.email, fetchCallback, () => {});
 		} else fetchIncidents(fetchCallback);
 	}, []);
 	useEffect(() => {
-		if (incidents.length) {
+		if (incidents?.length) {
 			const discrimination = incidents.filter(
 				(incident) => incident.incidentType === 'Discrimination'
 			);
-			console.log(discrimination);
 			const bias = incidents.filter(
 				(incident) => incident.incidentType === 'Bias'
 			);
-			console.log(bias);
 			const harassment = incidents.filter(
 				(incident) => incident.incidentType === 'Harassment'
 			);
-			console.log(harassment);
 			const graphData = [
 				{
 					name: 'Discrimination',
@@ -130,7 +123,7 @@ const Incidents = () => {
 								{rating ? rating : 'No data'}
 							</p>
 							<p className='text-center text-[20px] font-semibold'>
-								Response Rating
+								Average Rating
 							</p>
 						</div>
 					</div>
@@ -140,68 +133,80 @@ const Incidents = () => {
 								Recent Incidents
 							</p>
 							<div className='h-max overflow-scroll'>
-								{incidents.slice(0, 5).map((incident) => (
-									<div key={incident.id}>
-										<div className='w-full gap-[20px] flex my-[20px]'>
-											<p className='w-1/4 min-w-max  text-black'>
-												{createDateString(incident.date)}
-											</p>
-											<p className='w-1/4 text-black'>
-												{incident.incidentType}
-											</p>
-											<p className='w-1/4 text-black'>{incident.severity}</p>
-											<p className='w-1/4 text-black flex gap-x-[10px] items-center'>
-												{incident?.status === 'Pending' && (
-													<span
-														className={`inline-block rounded-[3px] w-3 h-3 bg-red-300`}></span>
-												)}
-												{incident.status === 'Assigned' && (
-													<span
-														className={`inline-block rounded-[3px] w-3 h-3 bg-purple-300`}></span>
-												)}
-												{incident.status === 'Under Review' && (
-													<span
-														className={`inline-block rounded-[3px] w-3 h-3 bg-blue-300`}></span>
-												)}
-												{incident.status === 'Resolved' && (
-													<span
-														className={`inline-block rounded-[3px] w-3 h-3 bg-green-300`}></span>
-												)}
-												<span>{incident.status}</span>
-											</p>
+								{incidents?.length ? (
+									incidents.slice(0, 5).map((incident) => (
+										<div key={incident.id}>
+											<div className='w-full gap-[20px] flex my-[20px]'>
+												<p className='w-1/4 min-w-max  text-black'>
+													{createDateString(incident.createdAt)}
+												</p>
+												<p className='w-1/4 text-black'>
+													{incident.incidentType}
+												</p>
+												<p className='w-1/4 text-black'>{incident.severity}</p>
+												<p className='w-1/4 text-black flex gap-x-[10px] items-center'>
+													{incident?.status === 'Pending' && (
+														<span
+															className={`inline-block rounded-[3px] w-3 h-3 bg-red-300`}></span>
+													)}
+													{incident.status === 'Assigned' && (
+														<span
+															className={`inline-block rounded-[3px] w-3 h-3 bg-purple-300`}></span>
+													)}
+													{incident.status === 'Under Review' && (
+														<span
+															className={`inline-block rounded-[3px] w-3 h-3 bg-blue-300`}></span>
+													)}
+													{incident.status === 'Resolved' && (
+														<span
+															className={`inline-block rounded-[3px] w-3 h-3 bg-green-300`}></span>
+													)}
+													<span>{incident.status}</span>
+												</p>
+											</div>
+											<div className='h-[1px] bg-[#E7E9EF] my-[20px]'></div>
 										</div>
-										<div className='h-[1px] bg-[#E7E9EF] my-[20px]'></div>
-									</div>
-								))}
+									))
+								) : (
+									<p className='text-center text-[42px] leading-[120%] font-bold'>
+										No data
+									</p>
+								)}
 							</div>
 						</div>
-						<div className='drop-shadow-xl w-1/3 flex flex-col items-start justify-center flex-shrink-0 bg-white bg-opacity-70 p-[30px] rounded-[20px]'>
+						<div className='drop-shadow-xl w-1/3 flex flex-col flex-shrink-0 bg-white bg-opacity-70 p-[30px] rounded-[20px]'>
 							<p className='mb-[10px] text-[20px] font-semibold'>
 								Incident Type Distribution
 							</p>
-							<ResponsiveContainer width='100%' height='90%'>
-								<PieChart>
-									<Pie
-										data={data}
-										dataKey='value'
-										nameKey='name'
-										cx='50%'
-										cy='50%'
-										outerRadius={130}
-										fill='#8884d8'>
-										{data.map((_, index) => (
-											<Cell key={`cell-${index}`} fill={colors[index]} />
-										))}
-									</Pie>
-									<Legend
-										verticalAlign='bottom'
-										iconType='circle'
-										layout='horizontal'
-										iconSize={8}
-										align='center'
-									/>
-								</PieChart>
-							</ResponsiveContainer>
+							{data?.length ? (
+								<ResponsiveContainer width='100%' height='90%'>
+									<PieChart>
+										<Pie
+											data={data}
+											dataKey='value'
+											nameKey='name'
+											cx='50%'
+											cy='50%'
+											outerRadius={130}
+											fill='#8884d8'>
+											{data.map((_, index) => (
+												<Cell key={`cell-${index}`} fill={colors[index]} />
+											))}
+										</Pie>
+										<Legend
+											verticalAlign='bottom'
+											iconType='circle'
+											layout='horizontal'
+											iconSize={8}
+											align='center'
+										/>
+									</PieChart>
+								</ResponsiveContainer>
+							) : (
+								<p className='text-center text-[42px] leading-[120%] font-bold'>
+									No data
+								</p>
+							)}
 						</div>
 					</div>
 				</div>

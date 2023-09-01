@@ -12,13 +12,13 @@ import {
 	get,
 	getDatabase,
 } from 'firebase/database';
-import {IFeedback} from '../../types';
+import {IFeedback, IFile} from '../../types';
 
 export const createIncident = (data: {
 	date: string;
 	severity: string;
 	comments?: string;
-	evidence?: string[];
+	evidence: IFile[];
 	desiredOutcome?: string;
 	confidentiality: string;
 	incidentType: 'Discrimination' | 'Harassment' | 'Bias' | string;
@@ -49,20 +49,26 @@ export const createIncident = (data: {
 
 export const fetchIncidents = (onSuccess: (snapshot: any) => unknown) => {
 	const db = initDB();
-	const incidentsRef = query(ref(db, 'incidents/'), orderByChild('status'));
+	const incidentsRef = query(ref(db, 'incidents/'), orderByChild('createdAt'));
 	onValue(incidentsRef, onSuccess);
 };
 export const fetchAssignedCases = (
 	email: string,
-	onSuccess: (snapshot: any) => unknown
+	onSuccess: (snapshot: any) => unknown,
+	onFailure: () => void
 ) => {
 	const db = initDB();
-	const incidentsRef = query(
-		ref(db, 'incidents/'),
-		orderByChild('investigator'),
-		equalTo(email)
-	);
-	onValue(incidentsRef, onSuccess);
+	const incidentsRef = ref(db, 'incidents/');
+	onValue(incidentsRef, (snapshot) => {
+		if (snapshot.size) {
+			const incidentsAssignedRef = query(
+				ref(db, 'incidents/'),
+				orderByChild('investigator'),
+				equalTo(email)
+			);
+			onValue(incidentsAssignedRef, onSuccess);
+		} else onFailure();
+	});
 };
 
 export const getIncidentById = (id, onSuccess: (snapshot: any) => unknown) => {

@@ -2,58 +2,52 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import NavBar from '../components/NavBar';
 import {resources} from '../constants';
 import {icons} from '../constants';
+
 const LearningHub = () => {
 	return (
 		<DashboardLayout>
-			<div className='h-full w-full pr-[40px] flex flex-col'>
+			<div className='h-full w-full flex flex-col'>
 				<NavBar title='Learning Hub' />
-				<div className='overflow-y-scroll'>
+				<div className='overflow-y-scroll pt-[30px]'>
 					<div>
 						{resources?.courses?.length
 							? resources.courses.slice(0, 1).map((course, index) => (
 									<a href={course.link} target='_blank' key={index}>
-										<div className='featured relative h-[500px] w-full flex gap-[20px] bg-white/90 bg-[url("/featured.jpg")] bg-center bg-cover rounded-[18px]'>
+										<div className='featured relative h-[600px] sm:h-[450px] md:h-[500px] w-full flex gap-[20px] bg-white/90 bg-[url("/featured.jpg")] bg-center bg-cover rounded-[18px]'>
 											<div className='absolute bottom-[30px] left-[30px] flex flex-col text-[17px]'>
-												<p className='z-20  text-white text-[20px] mb-2'>
+												<p className='z-20  text-white text-[20px]  mb-2'>
 													Featured
 												</p>
-												<h2 className='mb-4 relative z-20 max-w-[620px] mb-1 font-bold text-white text-[48px] leading-[120%] '>
+												<h2 className='mb-4 relative z-20 max-w-[620px] mb-1 font-bold text-white text-[34px] md:text-[40px] lg:text-[48px] leading-[120%] '>
 													{course.title}
 												</h2>
-												<p className='z-20 max-w-[840px] text-white text-[18px]'>
+												<p className='z-20 w-full md:max-w-[520px] lg:max-w-[640px] xl:max-w-[720px] 2xl:max-w-[840px] text-white text-[16px] lg:text-[18px] '>
 													{course.description}
 												</p>
 											</div>
-											<div className='arrow z-20 absolute bottom-2 right-[128px]'>
-												<img
-													src='/arrow-right-white.svg'
-													width={64}
-													height={64}
-												/>
-											</div>
-											<div className='w-full h-full absolute bg-black/20 bottom-0 left-0 rounded-[18px]'></div>
+											<div className='w-full h-full absolute bg-black/40 bottom-0 left-0 rounded-[18px]'></div>
 										</div>
 									</a>
 							  ))
 							: null}
-						<div className='flex justify-between items-start mb-[20px] mt-[40px]'>
+						<div className='flex justify-between items-start mb-[20px] mt-[40px] '>
 							<h2 className='text-[28px] font-bold'>Courses</h2>
 						</div>
-						<div className='h-max w-full flex gap-[20px] items-end overflow-hidden '>
-							<div className='w-full grid grid-cols-2 gap-[20px]'>
+						<div>
+							<div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 min-[1050px]:grid-cols-2 min-[2000px]:grid-cols-4 gap-[20px]'>
 								{resources?.courses?.length
 									? resources.courses.slice(0, 4).map((course, index) => (
 											<a href={course.link} target='_blank' key={index}>
-												<div className='relative h-[160px] w-full flex gap-[20px] bg-white/90 p-[20px] rounded-[18px]'>
+												<div className='relative h-[160px] w-full flex gap-[20px] bg-white/90 p-[18px] rounded-[18px]'>
 													<div
-														className={`w-[250px] bg-[#F8F0FA] h-[120px] rounded-[9px] ${course.image} bg-no-repeat bg-center bg-cover`}></div>
+														className={`w-[160px] md:w-[250px] lg:w-[160px] min-[1050px]:w-[250px] bg-[#F8F0FA] h-[120px] rounded-[9px] ${course.image} bg-no-repeat bg-center bg-cover`}></div>
 													<div className='flex flex-col text-[17px]'>
-														<h2 className='max-w-[260px] mb-1 font-medium text-[18px] leading-[120%] xl:text-[20px] '>
-															{course.title.length > 70
-																? `${course.title.slice(0, 70)} ...`
+														<h2 className=' text-black/80  max-w-[260px] mb-1 font-medium leading-[120%] lg:text-[20px] text-[16px] md:text-[19px] lg:text-[18px] xl:text-[20px] '>
+															{course.title.length > 50
+																? `${course.title.slice(0, 50)}...`
 																: course.title}
 														</h2>
-														<p className='text-gray text-[16px]'>
+														<p className='text-gray text-[15px] md:text-[16px] mb-1 font-medium leading-[120%] lg:text-[17px]'>
 															{course.platform}
 														</p>
 													</div>
@@ -69,20 +63,20 @@ const LearningHub = () => {
 							<h2 className='text-[28px] font-bold'>Articles</h2>
 						</div>
 						<div className='h-max w-full flex  items-end overflow-hidden '>
-							<div className='w-full grid grid-cols-3 gap-[20px]'>
+							<div className='w-full grid min-[580px]:grid-cols-2 xl:grid-cols-3 gap-[20px]'>
 								{resources?.articles?.length
 									? resources.articles.slice(0, 4).map((article, index) => (
 											<a href={article.link} target='_blank' key={index}>
-												<div className='w-full flex-shrink-0 h-[300px] flex flex-col relative bg-white card bg-white rounded-[18px] p-[20px] text-[17px]'>
+												<div className='w-full flex-shrink-0 h-[300px] flex flex-col relative bg-white card bg-white rounded-[18px] p-[18px] sm:text-[17px]md:text-[15px] lg:text-[17px]'>
 													<div
 														className={`bg-[#F8F0FA] h-[150px] rounded-[9px] ${article.image} bg-no-repeat bg-center bg-cover`}></div>
 													<div className='flex flex-col relative text-[17px]'>
-														<h2 className='max-w-[500px] my-3 font-medium text-[18px] leading-[120%] xl:text-[20px] '>
+														<h2 className='max-w-[500px] my-3 text-black/80 font-medium leading-[120%]text-[16px] md:text-[19px] lg:text-[18px] xl:text-[20px]  max-w-[260px] mb-1 font-medium leading-[120%]'>
 															{article.title.length > 70
 																? `${article.title.slice(0, 70)} ...`
 																: article.title}
 														</h2>
-														<p className='text-gray text-[16px]'>
+														<p className='text-gray mb-1 font-medium leading-[120%] text-[15px] md:text-[16px] lg:text-[17px]'>
 															{article.platform}
 														</p>
 													</div>
@@ -97,8 +91,8 @@ const LearningHub = () => {
 						<div className='flex justify-between items-start mb-[20px] mt-[60px]'>
 							<h2 className='text-[28px] font-bold'>Podcasts</h2>
 						</div>
-						<div className='h-max w-full flex gap-[20px] items-end overflow-hidden '>
-							<div className='w-full grid grid-cols-3 gap-[20px]'>
+						<div className=''>
+							<div className='w-full grid min-[600px]:grid-cols-2 xl:grid-cols-3 gap-[20px]'>
 								{resources?.podcasts?.length
 									? resources.podcasts.slice(0, 4).map((podcast, index) => (
 											<a href={podcast.link} target='_blank' key={index}>
@@ -110,12 +104,12 @@ const LearningHub = () => {
 															} bg-no-repeat bg-center bg-[length:48px_48px]`}></div>
 													</div>
 													<div className='flex flex-col text-[17px]'>
-														<h2 className='max-w-[250px] mb-1 font-medium text-[18px] leading-[120%] xl:text-[20px] '>
+														<h2 className='max-w-[250px] text-black/80 mb-1 font-medium leading-[120%] md:text-[16px]  text-[16px] md:text-[19px] lg:text-[18px] xl:text-[20px] '>
 															{podcast.title.length > 45
 																? `${podcast.title.slice(0, 45)} ...`
 																: podcast.title}
 														</h2>
-														<p className='text-gray text-[16px]'>
+														<p className='text-gray  text-[15px] md:text-[16px] lg:text-[17px] font-medium leading-[120%]'>
 															{podcast.platform}
 														</p>
 													</div>

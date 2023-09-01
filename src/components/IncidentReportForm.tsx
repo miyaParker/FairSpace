@@ -1,11 +1,17 @@
 import {useEffect, useRef, useState} from 'react';
 import {motion} from 'framer-motion';
 import {createIncident} from '../services/firebase/dashboard';
-import {IIncident} from '../types';
+import {IFile, IIncident} from '../types';
 import Loader from './Loader';
 import firebase from 'firebase/compat/app';
 import User = firebase.User;
-import {requiredFields} from '../constants';
+import {
+	documentTypes,
+	imageTypes,
+	requiredFields,
+	videoTypes,
+} from '../constants';
+import {uploadFile} from '../services/firebase/storage';
 
 const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 	const initialData = {
@@ -19,7 +25,6 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 		description: '',
 		partiesInvolved: '',
 		witnesses: '',
-		evidence: [],
 		emotionalImpact: '',
 		desiredOutcome: '',
 		confidentiality: '',
@@ -28,15 +33,18 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 		rating: 0,
 		feedback: [],
 		createdAt: '',
+		investigator: '',
 	};
 	const [user, setUser] = useState({} as User);
 	const [loading, setLoading] = useState(false);
 	const [index, setIndex] = useState(1);
 	const [prevIndex, setPrevIndex] = useState(1);
 	const [formData, setFormData] = useState<IIncident>(initialData);
+	const [fileList, setFileList] = useState<any[]>([]);
 
 	const dateRef = useRef<HTMLInputElement | null>(null);
 	const timeRef = useRef<HTMLInputElement | null>(null);
+	const attachmentRef = useRef<HTMLInputElement | null>(null);
 
 	useEffect(() => {
 		const userObject = localStorage.getItem('user');
@@ -51,13 +59,21 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 			value: '',
 		});
 	};
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
+		setLoading(true);
+		const fileUrls = [] as IFile[];
+		for (const file of fileList) {
+			await uploadFile(file).then((url) => {
+				fileUrls.push({name: file.name, size: file.size, type: file.type, url});
+			});
+		}
 		const data = {
 			...formData,
+			evidence: fileUrls,
 			reportedBy: user.uid,
 			createdAt: new Date().getTime(),
 		};
-		setLoading(true);
+		console.log(data);
 		createIncident(data);
 		setTimeout(() => {
 			setShow(false);
@@ -92,12 +108,27 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									<input
 										ref={dateRef}
 										value={formData.date}
-										onChange={(e) =>
+										onChange={(e) => {
+											setError({key: 0, value: ''});
 											setFormData({
 												...formData,
-												date: e.target.value,
-											})
-										}
+												date: '',
+											});
+											const today = new Date().getTime();
+											const incidentDate = new Date(e.target.value).getTime();
+
+											if (incidentDate <= today) {
+												setFormData({
+													...formData,
+													date: e.target.value,
+												});
+											} else
+												setError({
+													key: 1,
+													value:
+														'Incident date cannot be in the future. Please choose a valid date.',
+												});
+										}}
 										type='date'
 										placeholder='mm/dd/yyyy'
 										required={true}
@@ -334,7 +365,6 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									) : null}
 								</motion.div>
 							) : null}
-
 							{index === 9 ? (
 								<motion.div
 									initial={{
@@ -346,8 +376,74 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 										stiffness: 80,
 									}}
 									className=''>
+									<label className='text-[52px] mb-4 block leading-[120%]'>
+										9.Do you have any evidence?
+									</label>
+									<input
+										accept={[
+											...imageTypes,
+											...videoTypes,
+											...documentTypes,
+										].toString()}
+										ref={attachmentRef}
+										type='file'
+										onChange={(e) =>
+											setFileList([
+												...Array.from(fileList),
+												e?.currentTarget?.files && e.currentTarget?.files[0],
+											])
+										}
+										className='hidden w-full p-8 bg-transparent text-[22px] mt-4 text-white block border border-white'
+									/>
+									{fileList?.length === 4 ? null : (
+										<div
+											onClick={() => attachmentRef.current?.click()}
+											className='mb-4 cursor-pointer flex flex-col gap-[20px] border-dashed items-center justify-center p-6 w-full mx-auto bg-transparent text-[22px] text-white block border border-white'>
+											<img src='/file.svg' width={24} height={24} />
+											<p className='inline-block text-white/50 text-[18px]'>
+												Attach if available (maximum of 4 files)
+											</p>
+										</div>
+									)}
+									{fileList?.length
+										? Array.from(fileList).map((file, index) => (
+												<div
+													className='w-full flex justify-between gap-[10px] p-4 inline-block mb-2 text-[16px] bg-[#121212]'
+													key={index}>
+													<p className=' font-medium '>{file?.name}</p>
+													<img
+														onClick={() => {
+															const newFileList = fileList.filter(
+																(fileCurrent) =>
+																	fileCurrent?.name !== file?.name
+															);
+															console.log(newFileList);
+															setFileList(newFileList);
+														}}
+														src='/close-white.svg'
+														width={24}
+														height={24}
+														className='cursor-pointer'
+													/>
+												</div>
+										  ))
+										: null}
+								</motion.div>
+							) : null}
+
+							{index === 10 ? (
+								<motion.div
+									initial={{
+										x: prevIndex > 9 ? -400 : 400,
+										opacity: 0,
+									}}
+									whileInView={{x: 0, opacity: 1}}
+									transition={{
+										stiffness: 80,
+									}}
+									className=''>
 									<label className='text-[52px]'>
-										9. How has the incident affected you emotionally?
+										10. How has the incident affected you emotionally?
 									</label>
 									<textarea
 										value={formData.emotionalImpact}
@@ -362,7 +458,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									/>
 								</motion.div>
 							) : null}
-							{index === 10 ? (
+							{index === 11 ? (
 								<motion.div
 									initial={{x: prevIndex > 10 ? -400 : 400}}
 									whileInView={{x: 0, opacity: 1}}
@@ -371,7 +467,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									}}
 									className=''>
 									<label className='text-[52px]'>
-										10. What would you like to see as an outcome of reporting
+										11. What would you like to see as an outcome of reporting
 										this incident?
 									</label>
 									<textarea
@@ -387,7 +483,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									/>
 								</motion.div>
 							) : null}
-							{index === 11 ? (
+							{index === 12 ? (
 								<motion.div
 									initial={{
 										x: prevIndex > 11 ? -400 : 400,
@@ -408,7 +504,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 											duration: 0.3,
 										}}>
 										<label className='text-[52px]'>
-											11. Would you like to report this incident anonymously?*
+											12. Would you like to report this incident anonymously?*
 										</label>
 										<select
 											required={true}
@@ -424,7 +520,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 											<option value='Yes'>Yes</option>
 											<option value='No'>No</option>
 										</select>
-										{error.key == 11 ? (
+										{error.key == 12 ? (
 											<p className='py-[20px] text-red-500'>{error.value}</p>
 										) : null}
 									</motion.div>
@@ -461,7 +557,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									) : null}
 								</motion.div>
 							) : null}
-							{index === 12 ? (
+							{index === 13 ? (
 								<motion.div
 									initial={{
 										x: 400,
@@ -473,7 +569,7 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									}}
 									className=''>
 									<label className='text-[52px]'>
-										12. Is there anything else you'd like to share about the
+										13. Is there anything else you'd like to share about the
 										incident?
 									</label>
 									<textarea
@@ -489,18 +585,18 @@ const IncidentReportForm = ({show, setShow}: {show: boolean; setShow: any}) => {
 									/>
 								</motion.div>
 							) : null}
-							{index === 12 ? (
+							{index === 13 ? (
 								<button
 									type='submit'
 									onClick={(e) => {
 										e.preventDefault();
-										handleSubmit();
+										handleSubmit().catch((err) => console.error(err));
 									}}
 									className='border border-black text-black bg-teal-400  text-[24px] border-2 py-[20px] px-[40px] rounded-[40px] absolute bottom-[120px] right-[20px] flex gap-[10px]'>
 									Submit
 								</button>
 							) : null}
-							{index <= 11 ? (
+							{index <= 12 ? (
 								<button
 									type='button'
 									onClick={() => {

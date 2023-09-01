@@ -53,26 +53,31 @@ export function createAdmin({
 		});
 }
 
-export function signInAdmin({
-	email,
-	password,
-}: {
-	email: string;
-	password: string;
-}) {
+export function signInAdmin(
+	{
+		email,
+		password,
+	}: {
+		email: string;
+		password: string;
+	},
+	cb?: (isSuperUser: boolean) => void
+) {
 	initDB();
 	const auth = getAuth();
 	const db = initDB();
-	return (
-		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				const user = userCredential.user;
-				const adminRef = query(
-					ref(db, 'admin/'),
-					orderByChild('uid'),
-					equalTo(user.uid)
-				);
-				onValue(adminRef, (snapshot) => {
+	signInWithEmailAndPassword(auth, email, password)
+		.then(async (userCredential) => {
+			const user = userCredential.user;
+			const adminRef = query(
+				ref(db, 'admin/'),
+				orderByChild('uid'),
+				equalTo(user.uid)
+			);
+			onValue(
+				adminRef,
+				(snapshot) => {
+					console.log(snapshot.val());
 					const admin = Object.values(snapshot.val())[0] as {
 						isAdmin: boolean;
 						isSuperAdmin: boolean;
@@ -89,23 +94,23 @@ export function signInAdmin({
 						})
 					);
 					initNotif();
-					console.log(user);
-				});
-				return {user, error: null};
-			})
-			// .then((data) => data)
-			.catch((error) => {
-				const errorMessage = error.message;
-				const wrongCredentials = errorMessage.includes('wrong-password');
-				const userNotFound = errorMessage.includes('user-not-found');
-				if (wrongCredentials) {
-					return {user: null, error: 'User not found'};
-				}
-				if (userNotFound) {
-					return {user: null, error: 'Wrong credentials'};
-				}
-			})
-	);
+					if (typeof cb === 'function')
+						if (admin?.isSuperAdmin || admin?.isAdmin) cb(true);
+				},
+				{onlyOnce: true}
+			);
+		})
+		.catch((error) => {
+			const errorMessage = error.message;
+			const wrongCredentials = errorMessage.includes('wrong-password');
+			const userNotFound = errorMessage.includes('user-not-found');
+			if (wrongCredentials) {
+				return {user: null, error: 'User not found'};
+			}
+			if (userNotFound) {
+				return {user: null, error: 'Wrong credentials'};
+			}
+		});
 }
 
 export function createUser({

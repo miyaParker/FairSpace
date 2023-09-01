@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import UserContext from '../../contexts/AuthContext';
 
 const AdminSignup = () => {
-	const {user: authUser, login} = useContext(UserContext);
+	const {login} = useContext(UserContext);
 	const navigate = useNavigate();
 	const [error, setError] = useState('');
 	const [user, setUser] = useState({
@@ -13,7 +13,11 @@ const AdminSignup = () => {
 	});
 
 	useEffect(() => {
-		if (authUser) navigate('/admin/dashboard');
+		login((user) => {
+			if (user && (user?.isAdmin || user?.isSuperAdmin)) {
+				navigate('/admin/dashboard');
+			}
+		});
 	}, []);
 
 	const handleSubmit = (e) => {

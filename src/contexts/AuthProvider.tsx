@@ -1,33 +1,23 @@
 import UserContext from './AuthContext';
-import {ReactNode, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import firebase from 'firebase/compat/app';
-import User = firebase.User;
+import {ReactNode, useState} from 'react';
 
-type UserType = User & {isAdmin: boolean; isSuperAdmin: boolean; role: string};
 const AuthProvider = ({children}: {children: ReactNode}) => {
-	const navigate = useNavigate();
-	const [user, setUser] = useState<UserType | null>(null);
+	const [user, setUser] = useState<string | null>(localStorage.getItem('user'));
 
-	const login = () => {
+	const login = (cb?: (user) => void) => {
 		const userObject = localStorage.getItem('user');
-		if (userObject) setUser(JSON.parse(userObject));
+		if (userObject) {
+			setUser(userObject);
+			const user = JSON.parse(userObject);
+			if (typeof cb === 'function') cb(user);
+		}
 	};
 
-	const logout = () => {
-		const isAdmin = user?.isAdmin || user?.isSuperAdmin;
+	const logout = (cb) => {
 		setUser(null);
 		localStorage.removeItem('user');
-		if (isAdmin) {
-			navigate('/auth/admin/login');
-			return;
-		}
-		navigate('/auth/login');
+		if (typeof cb === 'function') cb();
 	};
-	useEffect(() => {
-		const userObject = localStorage.getItem('user');
-		if (userObject) setUser(JSON.parse(userObject));
-	}, []);
 
 	return (
 		<UserContext.Provider value={{user, login, logout}}>
